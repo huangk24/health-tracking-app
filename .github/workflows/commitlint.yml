@@ -1,0 +1,17 @@
+name: Commitlint
+
+on:
+  pull_request:
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install commitlint
+        run: npm install --global @commitlint/config-conventional @commitlint/cli
+      - name: Lint commits
+        run: npx commitlint --from=origin/main --to=HEAD

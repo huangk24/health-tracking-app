@@ -1,0 +1,95 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend (FastAPI)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect backend
+        id: backend_check
+        run: |
+          if [ -f "pyproject.toml" ] || [ -f "requirements.txt" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Set up Python
+        if: steps.backend_check.outputs.exists == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install backend deps
+        if: steps.backend_check.outputs.exists == 'true'
+        run: |
+          if [ -f "pyproject.toml" ]; then
+            pip install -U pip
+            pip install -e .
+          elif [ -f "requirements.txt" ]; then
+            pip install -U pip
+            pip install -r requirements.txt
+            if [ -f "requirements-dev.txt" ]; then
+              pip install -r requirements-dev.txt
+            fi
+          fi
+      - name: Run backend tests
+        if: steps.backend_check.outputs.exists == 'true'
+        run: |
+          if [ -f "pyproject.toml" ] && python -c "import importlib.util; import sys; sys.exit(0 if importlib.util.find_spec('pytest') else 1)"; then
+            pytest
+          elif [ -d "tests" ]; then
+            pytest
+          else
+            echo "No backend tests configured yet."
+          fi
+
+  frontend:
+    name: Frontend (React)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect frontend
+        id: frontend_check
+        run: |
+          if [ -f "package.json" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Set up Node
+        if: steps.frontend_check.outputs.exists == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend deps
+        if: steps.frontend_check.outputs.exists == 'true'
+        run: npm ci
+      - name: Run frontend tests
+        if: steps.frontend_check.outputs.exists == 'true'
+        run: |
+          if npm run | grep -q "test"; then
+            npm test -- --run
+          else
+            echo "No frontend tests configured yet."
+          fi
+      - name: Build frontend
+        if: steps.frontend_check.outputs.exists == 'true'
+        run: |
+          if npm run | grep -q "build"; then
+            npm run build
+          else
+            echo "No frontend build configured yet."
+          fi
