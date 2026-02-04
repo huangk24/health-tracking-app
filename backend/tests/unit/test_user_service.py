@@ -1,14 +1,18 @@
 import pytest
-from app.services.user import create_user, get_user
+from app.services.auth import get_password_hash, verify_password
 
 
-def test_create_user():
-    """Test create_user service function"""
-    result = create_user({"username": "test"})
-    assert result is None  # Placeholder returns None
+def test_password_hashing():
+    """Test password hashing"""
+    password = "MySecurePassword123"
+    hashed = get_password_hash(password)
+    assert hashed != password
+    assert verify_password(password, hashed)
 
 
-def test_get_user():
-    """Test get_user service function"""
-    result = get_user(1)
-    assert result is None  # Placeholder returns None
+def test_password_case_sensitive():
+    """Test password verification is case-sensitive"""
+    password = "MySecurePassword123"
+    hashed = get_password_hash(password)
+    assert not verify_password("mysecurepassword123", hashed)
+    assert not verify_password("MYSECUREPASSWORD123", hashed)
