@@ -53,7 +53,7 @@ def test_login_success(client):
     """Test successful login"""
     # Register user first
     client.post("/auth/register", json={"username": "testuser", "password": "Password123"})
-    
+
     # Login
     response = client.post("/auth/login", json={"username": "testuser", "password": "Password123"})
     assert response.status_code == 200
