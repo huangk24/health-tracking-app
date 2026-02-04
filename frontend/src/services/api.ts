@@ -1,11 +1,11 @@
 // Detect backend URL based on environment
 const getApiBaseUrl = () => {
   if (typeof window === 'undefined') return 'http://localhost:8000';
-  
+
   const hostname = window.location.hostname;
-  
+
   console.log('Current hostname:', hostname);
-  
+
   // Codespaces URL pattern: {name}-{port}.app.github.dev
   if (hostname.includes('.app.github.dev')) {
     // Replace the frontend port (e.g., 5174) with backend port (8000)
@@ -14,7 +14,7 @@ const getApiBaseUrl = () => {
     console.log('Detected Codespaces, using:', backendUrl);
     return backendUrl;
   }
-  
+
   // Local development
   console.log('Using localhost');
   return 'http://localhost:8000';
