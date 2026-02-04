@@ -3,60 +3,106 @@
 ## Project Overview
 A health tracking application for monitoring daily calorie intake and consumption to support weight management goals (gain/loss).
 
-## Current State
-This is a greenfield project. The codebase is in initial setup phase with minimal structure. When implementing features, establish clear architectural decisions early.
+## Stack (Option B - Implemented)
+- **Backend**: FastAPI (Python) + SQLAlchemy + SQLite
+- **Frontend**: React + Vite + TypeScript
+- **Auth**: JWT tokens + bcrypt password hashing
+- **Testing**: pytest (backend 90%+ coverage), vitest (frontend)
 
-## Development Guidelines
+## Architecture & Key Patterns
 
-### Architecture Considerations
-When building this app, consider:
-- **Data Model**: User profiles, daily entries, food items, exercise activities, calorie tracking
-- **Core Features**: Calorie intake logging, consumption/exercise tracking, daily/weekly summaries, weight progress tracking
-- **User Flow**: Registration → Goal setting (weight gain/loss) → Daily logging → Progress visualization
+### Backend Structure ([backend/app](backend/app))
+- **Single-responsibility files**: One route/model/schema/service per file
+- **Layered architecture**: Routes → Services → Models (database)
+- **Database**: SQLAlchemy ORM with [app/database.py](backend/app/database.py), tables auto-created on startup
+- **Authentication**: JWT tokens in [app/services/auth.py](backend/app/services/auth.py), bcrypt password hashing (case-sensitive)
+- **API routes**: Grouped under `/auth` prefix in [app/api/routes/auth.py](backend/app/api/routes/auth.py)
 
-### Technology Stack Recommendations
-Before implementing, decide on:
-- **Platform**: Web (React/Vue/Angular), Mobile (React Native/Flutter), or Desktop
-- **Backend**: REST API vs GraphQL, database choice (SQL for relational data, NoSQL for flexibility)
-- **Authentication**: User accounts and data privacy requirements
-- **Data Persistence**: Local storage vs cloud sync considerations
+### Frontend Structure ([frontend/src](frontend/src))
+- **Context-based auth**: [contexts/AuthContext.tsx](frontend/src/contexts/AuthContext.tsx) manages global auth state with localStorage
+- **Protected routes**: [components/ProtectedRoute.tsx](frontend/src/components/ProtectedRoute.tsx) wraps authenticated pages
+- **API client**: [services/api.ts](frontend/src/services/api.ts) handles all backend requests
+- **Page routing**: React Router with `/login`, `/register`, `/dashboard`
 
-### Key Features to Implement
-1. **User Management**: Profile creation with weight goals and target calorie ranges
-2. **Food Logging**: Quick entry system with calorie database or API integration (e.g., USDA FoodData)
-3. **Activity Tracking**: Exercise logging with calorie burn calculations
-4. **Dashboard**: Daily calorie balance (intake - consumption), progress charts, goal tracking
-5. **History**: Historical data view, trends analysis, weekly/monthly summaries
+## Development Workflow
 
-### Development Workflow
-- Document setup instructions in README.md as you establish the build system
-- Include database schema or data models in documentation once designed
-- Add environment variable templates (.env.example) for API keys or configuration
-- Create clear separation between frontend/backend if building full-stack
+### Backend
+```bash
+cd backend
+pip install -r requirements.txt -r requirements-dev.txt
+uvicorn app.main:app --reload  # Dev server on :8000
+pytest tests/ -v  # Run tests with coverage
+```
 
-### Naming Conventions
-Use clear, domain-specific naming:
-- `CalorieEntry`, `FoodItem`, `ExerciseActivity`, `UserProfile`, `WeightGoal`
-- Prefer explicit names over abbreviations for health-related terms
+### Frontend
+```bash
+cd frontend
+npm install
+npm run dev  # Vite dev server on :5173
+npm test  # Run tests
+```
 
-### Data Validation
-- Validate calorie values (positive numbers, reasonable ranges)
-- Date/time handling for entry timestamps and timezone considerations
-- User input sanitization for food names and notes
+### Database
+- SQLite file: [backend/health_tracking.db](backend/health_tracking.db)
+- Migrations: Not implemented yet (tables auto-create)
+- Test DB: Separate SQLite file per test
 
-## Files to Create First
-1. Technology choice documentation
-2. Data model/schema definitions
-3. API endpoint specifications (if applicable)
-4. Setup/installation instructions in README.md
-5. Configuration files (package.json, requirements.txt, etc.)
+## Critical Implementation Details
 
-## Testing Strategy
-When implementing tests:
-- Unit tests for calorie calculations and data transformations
-- Integration tests for database operations and API endpoints
-- E2E tests for critical user flows (logging food, viewing progress)
+### Password Security
+- **Case-sensitive**: Passwords use bcrypt and preserve case
+- **No duplicate usernames**: Enforced at database level (unique constraint)
+- **Min length**: 8 characters (validated in Pydantic schema)
 
----
+### Authentication Flow
+1. Register → Auto-login → Redirect to dashboard
+2. Login → Store JWT token + user in localStorage → Protected routes accessible
+3. Logout → Clear localStorage → Redirect to login
 
-*Update these instructions as architectural decisions are made and patterns emerge in the codebase.*
+### API Integration
+- **CORS**: Configured in [backend/app/main.py](backend/app/main.py) for `localhost:5173`
+- **Token format**: `Authorization: Bearer <token>`
+- **Endpoints**: `/auth/register` (POST), `/auth/login` (POST)
+
+### Testing Standards
+- **Backend**: 80%+ coverage required (currently 90.70%)
+- **Unit tests**: [tests/unit/](backend/tests/unit/) for models/schemas/services
+- **Integration tests**: [tests/integration/](backend/tests/integration/) for API endpoints
+- **Test fixtures**: [tests/conftest.py](backend/tests/conftest.py) sets up test database
+
+## CI/CD Automation
+- **Pre-commit**: Trailing whitespace, end-of-file fixes, YAML validation
+- **Commitlint**: Conventional commits enforced
+- **CI**: Backend + frontend tests run on PRs (coverage gates enabled)
+- **Code review**: CODEOWNERS auto-assigns reviewers
+
+## Common Tasks
+
+### Adding a new backend route
+1. Create route file in [app/api/routes/](backend/app/api/routes/)
+2. Add route to [app/api/router.py](backend/app/api/router.py)
+3. Create corresponding tests in [tests/integration/](backend/tests/integration/)
+
+### Adding a new frontend page
+1. Create page component in [src/pages/](frontend/src/pages/)
+2. Add route in [src/App.tsx](frontend/src/App.tsx)
+3. Wrap with `<ProtectedRoute>` if authentication required
+
+### Running the full stack
+```bash
+# Terminal 1: Backend
+cd backend && uvicorn app.main:app --reload
+
+# Terminal 2: Frontend
+cd frontend && npm run dev
+
+# Visit http://localhost:5173
+```
+
+## Next Steps (Not Yet Implemented)
+- User profile updates (sex, age, height, weight)
+- Food logging and nutrition tracking
+- Goal setting and recommendations
+- BMR/TDEE calculations
+- Alembic database migrations
+- Environment variables for secrets
