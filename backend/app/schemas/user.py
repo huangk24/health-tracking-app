@@ -1,18 +1,37 @@
-# User schema placeholder
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, ConfigDict
+from typing import Optional
 
-class UserCreate(BaseModel):
+
+class UserRegister(BaseModel):
+    """Schema for user registration"""
+    username: str = Field(..., min_length=3, max_length=50)
+    password: str = Field(..., min_length=8)
+
+
+class UserLogin(BaseModel):
+    """Schema for user login"""
     username: str
     password: str
-    sex: str
-    age: int
-    height: int
-    weight: int
 
-class UserRead(BaseModel):
+
+class UserResponse(BaseModel):
+    """Schema for user response"""
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     username: str
-    sex: str
-    age: int
-    height: int
-    weight: int
+    sex: Optional[str] = None
+    age: Optional[int] = None
+    height: Optional[int] = None
+    weight: Optional[int] = None
+
+
+class Token(BaseModel):
+    """Schema for JWT token response"""
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    """Schema for token data"""
+    username: Optional[str] = None
