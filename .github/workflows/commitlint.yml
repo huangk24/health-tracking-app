@@ -8,10 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
       - name: Install commitlint
-        run: npm install --global @commitlint/config-conventional @commitlint/cli
+        run: npm install -g @commitlint/config-conventional @commitlint/cli
       - name: Lint commits
-        run: npx commitlint --from=origin/main --to=HEAD
+        run: commitlint --from=origin/main --to=HEAD --verbose
