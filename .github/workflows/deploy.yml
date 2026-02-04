@@ -1,0 +1,14 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deployment placeholder
+        run: |
+          echo "Deployment pipeline not configured yet."
+          echo "Add hosting provider steps (e.g., Vercel/Render/Fly.io) and secrets."
