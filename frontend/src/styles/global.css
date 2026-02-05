@@ -122,3 +122,40 @@ body {
   font-weight: 600;
   margin-bottom: 8px;
 }
+
+.meals-section {
+  margin-top: 40px;
+}
+
+.meals-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.meals-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.no-items {
+  text-align: center;
+  color: #999;
+  padding: 40px 20px;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .meals-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .meals-header h2 {
+    font-size: 20px;
+  }
+}

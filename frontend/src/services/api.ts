@@ -115,7 +115,7 @@ export const nutritionApi = {
     return api.get("/nutrition/food-items");
   },
 
-  createFoodItem: async (data: any) => {
-    return api.post("/nutrition/food-items", data);
+  createFoodItem: async (data: any, token?: string) => {
+    return api.post("/nutrition/food-items", data, token);
   },
 };

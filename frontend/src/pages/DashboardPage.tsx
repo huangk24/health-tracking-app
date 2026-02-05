@@ -5,6 +5,7 @@ import { nutritionApi } from "../services/api";
 import { DailyNutritionSummary } from "../types/nutrition";
 import NutritionSummary from "../components/NutritionSummary";
 import MealSection from "../components/MealSection";
+import AddFoodForm from "../components/AddFoodForm";
 import "../styles/global.css";
 
 const DashboardPage: React.FC = () => {
@@ -14,27 +15,31 @@ const DashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchNutrition = async () => {
     if (!token) {
       setError("Not authenticated");
       return;
     }
 
-    const fetchNutrition = async () => {
-      try {
-        setLoading(true);
-        const data = await nutritionApi.getDailyNutrition(undefined, token);
-        setNutritionData(data);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message || "Failed to load nutrition data");
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      setLoading(true);
+      const data = await nutritionApi.getDailyNutrition(undefined, token);
+      setNutritionData(data);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message || "Failed to load nutrition data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchNutrition();
   }, [token]);
+
+  const handleFoodAdded = () => {
+    fetchNutrition();
+  };
 
   const handleLogout = () => {
     logout();
@@ -45,13 +50,22 @@ const DashboardPage: React.FC = () => {
     <div className="dashboard-page">
       <div className="dashboard-header">
         <h1>Welcome, {user?.username}!</h1>
-        <button onClick={handleLogout} className="btn-secondary">
+        <button onClick={handleLogout} className="logout-btn">
           Logout
         </button>
       </div>
 
-      {loading && <div className="loading">Loading nutrition data...</div>}
-      {error && <div className="error-message">{error}</div>}
+      {loading && (
+        <div className="loading">
+          <div className="spinner"></div>
+        </div>
+      )}
+      {error && (
+        <div className="error-message">
+          <div className="error-message-title">Error</div>
+          {error}
+        </div>
+      )}
 
       {nutritionData && (
         <>
@@ -61,14 +75,20 @@ const DashboardPage: React.FC = () => {
             remaining={nutritionData.remaining}
           />
 
-          <div className="meals-container">
-            <h2>Meals</h2>
+          <div className="meals-section">
+            <div className="meals-header">
+              <h2>Meals</h2>
+              <AddFoodForm token={token!} onFoodAdded={handleFoodAdded} />
+            </div>
+
             {nutritionData.meals.length === 0 ? (
               <p className="no-items">No meals logged yet. Start adding some food!</p>
             ) : (
-              nutritionData.meals.map((meal) => (
-                <MealSection key={meal.meal_type} meal={meal} />
-              ))
+              <div className="meals-container">
+                {nutritionData.meals.map((meal) => (
+                  <MealSection key={meal.meal_type} meal={meal} />
+                ))}
+              </div>
             )}
           </div>
         </>
