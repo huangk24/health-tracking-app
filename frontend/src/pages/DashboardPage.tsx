@@ -86,7 +86,12 @@ const DashboardPage: React.FC = () => {
             ) : (
               <div className="meals-container">
                 {nutritionData.meals.map((meal) => (
-                  <MealSection key={meal.meal_type} meal={meal} />
+                  <MealSection
+                    key={meal.meal_type}
+                    meal={meal}
+                    token={token!}
+                    onEntryUpdated={handleFoodAdded}
+                  />
                 ))}
               </div>
             )}

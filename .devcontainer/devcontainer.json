@@ -5,11 +5,13 @@
   "portsAttributes": {
     "8000": {
       "label": "Backend API",
+      "visibility": "public",
       "onAutoForward": "notify",
       "requireLocalPort": false
     },
     "5173": {
       "label": "Frontend",
+      "visibility": "public",
       "onAutoForward": "notify",
       "requireLocalPort": false
     }

@@ -82,7 +82,16 @@ export const api = {
       headers["Authorization"] = `Bearer ${token}`;
     }
     const response = await fetch(`${API_BASE_URL}${url}`, { headers });
-    if (!response.ok) throw new Error("Request failed");
+    if (!response.ok) {
+      let detail = response.statusText || "Request failed";
+      try {
+        const error = await response.json();
+        detail = error.detail || JSON.stringify(error);
+      } catch (err) {
+        // Ignore parsing errors to preserve default detail.
+      }
+      throw new Error(detail);
+    }
     return response.json();
   },
 
@@ -96,7 +105,16 @@ export const api = {
       headers,
       body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error("Request failed");
+    if (!response.ok) {
+      let detail = response.statusText || "Request failed";
+      try {
+        const error = await response.json();
+        detail = error.detail || JSON.stringify(error);
+      } catch (err) {
+        // Ignore parsing errors to preserve default detail.
+      }
+      throw new Error(detail);
+    }
     return response.json();
   },
 };
@@ -111,11 +129,65 @@ export const nutritionApi = {
     return api.post("/nutrition/entries", data, token);
   },
 
+  updateFoodEntry: async (entryId: number, data: any, token?: string) => {
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await fetch(`${API_BASE_URL}/nutrition/entries/${entryId}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      let detail = response.statusText || "Request failed";
+      try {
+        const error = await response.json();
+        detail = error.detail || JSON.stringify(error);
+      } catch (err) {
+        // Ignore parsing errors to preserve default detail.
+      }
+      throw new Error(detail);
+    }
+    return response.json();
+  },
+
+  deleteFoodEntry: async (entryId: number, token?: string) => {
+    const headers: HeadersInit = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await fetch(`${API_BASE_URL}/nutrition/entries/${entryId}`, {
+      method: "DELETE",
+      headers,
+    });
+    if (!response.ok) {
+      let detail = response.statusText || "Request failed";
+      try {
+        const error = await response.json();
+        detail = error.detail || JSON.stringify(error);
+      } catch (err) {
+        // Ignore parsing errors to preserve default detail.
+      }
+      throw new Error(detail);
+    }
+    return;
+  },
+
   getFoodItems: async () => {
     return api.get("/nutrition/food-items");
   },
 
   createFoodItem: async (data: any, token?: string) => {
     return api.post("/nutrition/food-items", data, token);
+  },
+
+  searchUsdaFoods: async (query: string) => {
+    const url = `/nutrition/usda/search?query=${encodeURIComponent(query)}`;
+    return api.get(url);
+  },
+
+  createUsdaFoodItem: async (fdcId: number, token?: string) => {
+    return api.post("/nutrition/food-items/usda", { fdc_id: fdcId }, token);
   },
 };

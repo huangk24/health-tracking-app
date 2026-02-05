@@ -20,6 +20,9 @@ class FoodItem(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     serving_size = Column(String)  # e.g., "100g", "1 cup"
+    serving_size_grams = Column(Float, nullable=True)
+    source = Column(String, default="custom", index=True)
+    external_id = Column(String, nullable=True, index=True)
     calories = Column(Float)
     protein_g = Column(Float, default=0)
     carbs_g = Column(Float, default=0)
@@ -49,7 +52,11 @@ class CalorieEntry(Base):
 
     def get_totals(self):
         """Calculate total nutrition for this entry"""
-        multiplier = self.quantity
+        unit = (self.unit or "serving").lower()
+        if unit in {"g", "gram", "grams"} and self.food_item.serving_size_grams:
+            multiplier = self.quantity / self.food_item.serving_size_grams
+        else:
+            multiplier = self.quantity
         return {
             "calories": self.food_item.calories * multiplier,
             "protein_g": self.food_item.protein_g * multiplier,
@@ -58,3 +65,7 @@ class CalorieEntry(Base):
             "fiber_g": self.food_item.fiber_g * multiplier,
             "sodium_mg": self.food_item.sodium_mg * multiplier,
         }
+
+    @property
+    def totals(self):
+        return self.get_totals()

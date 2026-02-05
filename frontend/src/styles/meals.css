@@ -43,11 +43,21 @@
 }
 
 .meal-entry {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
   padding: 16px 20px;
   border-bottom: 1px solid #f0f0f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.meal-entry:hover {
+  background-color: #f7f8ff;
 }
 
 .meal-entry:last-child .meal-entry-content {
@@ -131,6 +141,117 @@
 
 .meal-total-item.fat .meal-total-value {
   color: #f5af19;
+}
+
+.entry-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  padding: 16px;
+}
+
+.entry-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.entry-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.entry-modal-header h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.entry-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #777;
+}
+
+.entry-error {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #f5c6cb;
+  font-size: 13px;
+}
+
+.entry-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.entry-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.entry-field input,
+.entry-field select {
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.entry-food-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #444;
+}
+
+.entry-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.entry-delete {
+  background: #fff5f5;
+  color: #c0392b;
+  border: 1px solid #f1b0b7;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.entry-save {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  flex: 1;
+}
+
+.entry-delete:disabled,
+.entry-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Meal-specific color accents */
