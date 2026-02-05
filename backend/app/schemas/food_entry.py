@@ -1,6 +1,6 @@
 from datetime import datetime
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class MealType(str, Enum):
@@ -34,8 +34,7 @@ class FoodItemResponse(FoodItemBase):
     id: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class CalorieEntryBase(BaseModel):
@@ -59,8 +58,7 @@ class CalorieEntryResponse(CalorieEntryBase):
     created_at: datetime
     food_item: FoodItemResponse
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class NutritionTotals(BaseModel):
