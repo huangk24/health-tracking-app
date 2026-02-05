@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from app.database import Base
 
 
@@ -12,3 +13,6 @@ class User(Base):
     age = Column(Integer, nullable=True)
     height = Column(Integer, nullable=True)
     weight = Column(Integer, nullable=True)
+
+    # Relationships
+    calorie_entries = relationship("CalorieEntry", back_populates="user")
