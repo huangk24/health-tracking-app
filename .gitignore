@@ -15,3 +15,6 @@ node_modules/
 # Build
 /dist/
 /build/
+
+# Database
+/backend/health_tracking.db
