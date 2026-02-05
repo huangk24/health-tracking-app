@@ -15,3 +15,9 @@ node_modules/
 # Build
 /dist/
 /build/
+
+# Vite
+/frontend/.vite/
+
+# Database
+/backend/health_tracking.db

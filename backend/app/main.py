@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from app.api.router import api_router
 from app.database import engine, Base
+from app.models import user, food_entry  # noqa: F401
 
 # Create database tables
 Base.metadata.create_all(bind=engine)

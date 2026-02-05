@@ -1,0 +1,26 @@
+{
+  "name": "Health Tracking App",
+  "image": "mcr.microsoft.com/devcontainers/universal:latest",
+  "forwardPorts": [8000, 5173],
+  "portsAttributes": {
+    "8000": {
+      "label": "Backend API",
+      "onAutoForward": "notify",
+      "requireLocalPort": false
+    },
+    "5173": {
+      "label": "Frontend",
+      "onAutoForward": "notify",
+      "requireLocalPort": false
+    }
+  },
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "README.md",
+        "backend/requirements.txt",
+        "frontend/package.json"
+      ]
+    }
+  }
+}

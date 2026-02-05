@@ -100,3 +100,22 @@ export const api = {
     return response.json();
   },
 };
+
+export const nutritionApi = {
+  getDailyNutrition: async (date?: string, token?: string) => {
+    const url = date ? `/nutrition/daily?date=${date}` : "/nutrition/daily";
+    return api.get(url, token);
+  },
+
+  createFoodEntry: async (data: any, token?: string) => {
+    return api.post("/nutrition/entries", data, token);
+  },
+
+  getFoodItems: async () => {
+    return api.get("/nutrition/food-items");
+  },
+
+  createFoodItem: async (data: any, token?: string) => {
+    return api.post("/nutrition/food-items", data, token);
+  },
+};
