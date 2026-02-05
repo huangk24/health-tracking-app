@@ -13,7 +13,6 @@ const NutritionSummary: React.FC<NutritionSummaryProps> = ({
   actual,
   remaining,
 }) => {
-  const caloriePercent = (actual.calories / goals.calories) * 100;
   const proteinPercent = (actual.protein_g / goals.protein_g) * 100;
   const carbsPercent = (actual.carbs_g / goals.carbs_g) * 100;
   const fatPercent = (actual.fat_g / goals.fat_g) * 100;

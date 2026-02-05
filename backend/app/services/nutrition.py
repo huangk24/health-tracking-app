@@ -25,7 +25,6 @@ class NutritionService:
         user_id: int, target_date: date, db: Session
     ) -> DailyNutritionSummary:
         """Calculate daily nutrition summary for a user"""
-        
         # Get all entries for the day
         entries = (
             db.query(CalorieEntry)
@@ -45,7 +44,6 @@ class NutritionService:
 
         # Calculate totals
         actual_intake = NutritionService._calculate_totals(entries)
-        
         # Build meals summary
         meals = []
         for meal_type in MealType:
