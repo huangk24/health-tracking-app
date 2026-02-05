@@ -225,6 +225,90 @@
   cursor: not-allowed;
 }
 
+.food-source-toggle {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.food-source-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  color: #444;
+}
+
+.usda-search-row {
+  display: flex;
+  gap: 12px;
+}
+
+.usda-search-row input {
+  flex: 1;
+}
+
+.btn-secondary {
+  padding: 12px 16px;
+  background-color: #eef2ff;
+  color: #3f51b5;
+  border: 1px solid #d6dcff;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #e0e7ff;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.usda-results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.usda-result {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fafafa;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.usda-result:hover {
+  border-color: #b8c2ff;
+  background: #f3f6ff;
+}
+
+.usda-result.selected {
+  border-color: #667eea;
+  background: #eef1ff;
+}
+
+.usda-result-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2e2e2e;
+}
+
+.usda-result-meta {
+  font-size: 12px;
+  color: #666;
+  margin-top: 2px;
+}
+
 @media (max-width: 480px) {
   .add-food-modal {
     max-width: 100%;
@@ -245,6 +329,10 @@
 
   .form-actions {
     flex-direction: column-reverse;
+  }
+
+  .usda-search-row {
+    flex-direction: column;
   }
 
   .btn-submit,

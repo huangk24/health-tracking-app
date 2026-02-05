@@ -1,5 +1,7 @@
 export type MealType = "breakfast" | "lunch" | "dinner" | "snack" | "in_between";
 
+export type FoodItemSource = "custom" | "usda";
+
 export interface NutritionTotals {
   calories: number;
   protein_g: number;
@@ -13,6 +15,9 @@ export interface FoodItem {
   id: number;
   name: string;
   serving_size: string;
+  serving_size_grams?: number | null;
+  source?: FoodItemSource;
+  external_id?: string | null;
   calories: number;
   protein_g: number;
   carbs_g: number;
@@ -29,6 +34,13 @@ export interface CalorieEntry {
   meal_type: MealType;
   date: string;
   food_item: FoodItem;
+  totals: NutritionTotals;
+}
+
+export interface CalorieEntryUpdate {
+  quantity?: number;
+  unit?: string;
+  meal_type?: MealType;
 }
 
 export interface MealSummary {
@@ -44,4 +56,17 @@ export interface DailyNutritionSummary {
   actual_consumption: NutritionTotals;
   remaining: NutritionTotals;
   meals: MealSummary[];
+}
+
+export interface UsdaFoodSearchResult {
+  fdc_id: number;
+  description: string;
+  brand_name?: string | null;
+  data_type?: string | null;
+  serving_size?: number | null;
+  serving_size_unit?: string | null;
+}
+
+export interface UsdaFoodSearchResponse {
+  results: UsdaFoodSearchResult[];
 }

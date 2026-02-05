@@ -8,14 +8,19 @@ from app.schemas.food_entry import (
     FoodItemCreate,
     FoodItemResponse,
     CalorieEntryCreate,
+    CalorieEntryUpdate,
     CalorieEntryResponse,
     DailyNutritionSummary,
+    UsdaFoodSearchResponse,
+    UsdaFoodSearchResult,
+    UsdaFoodCreate,
 )
 from app.models.food_entry import FoodItem, CalorieEntry
 from app.models.user import User
 from app.services.nutrition import NutritionService
 from app.services.auth import decode_token
 from app.services.user import get_user_by_username
+from app.services.usda import UsdaService
 
 router = APIRouter(prefix="/nutrition", tags=["nutrition"])
 
@@ -95,6 +100,64 @@ def create_calorie_entry(
     return entry
 
 
+@router.patch("/entries/{entry_id}", response_model=CalorieEntryResponse)
+def update_calorie_entry(
+    entry_id: int,
+    entry_data: CalorieEntryUpdate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Update an existing calorie entry"""
+    entry = (
+        db.query(CalorieEntry)
+        .filter(CalorieEntry.id == entry_id, CalorieEntry.user_id == user.id)
+        .first()
+    )
+    if not entry:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Calorie entry not found",
+        )
+
+    if entry_data.quantity is not None:
+        if entry_data.quantity <= 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Quantity must be positive",
+            )
+        entry.quantity = entry_data.quantity
+    if entry_data.unit is not None:
+        entry.unit = entry_data.unit
+    if entry_data.meal_type is not None:
+        entry.meal_type = entry_data.meal_type
+
+    db.commit()
+    db.refresh(entry)
+    return entry
+
+
+@router.delete("/entries/{entry_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_calorie_entry(
+    entry_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Delete a calorie entry"""
+    entry = (
+        db.query(CalorieEntry)
+        .filter(CalorieEntry.id == entry_id, CalorieEntry.user_id == user.id)
+        .first()
+    )
+    if not entry:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Calorie entry not found",
+        )
+    db.delete(entry)
+    db.commit()
+    return None
+
+
 @router.get("/food-items", response_model=list[FoodItemResponse])
 def get_food_items(db: Session = Depends(get_db)):
     """Get all available food items"""
@@ -108,6 +171,66 @@ def create_food_item(
 ):
     """Create a new food item"""
     food_item = FoodItem(**food_data.dict())
+    db.add(food_item)
+    db.commit()
+    db.refresh(food_item)
+    return food_item
+
+
+@router.get("/usda/search", response_model=UsdaFoodSearchResponse)
+def search_usda_foods(query: str):
+    """Search USDA FoodData Central"""
+    data = UsdaService.search_foods(query=query)
+    results = []
+    for food in data.get("foods", []):
+        results.append(
+            UsdaFoodSearchResult(
+                fdc_id=food.get("fdcId"),
+                description=food.get("description") or "",
+                brand_name=food.get("brandName"),
+                data_type=food.get("dataType"),
+                serving_size=food.get("servingSize"),
+                serving_size_unit=food.get("servingSizeUnit"),
+            )
+        )
+    return UsdaFoodSearchResponse(results=results)
+
+
+@router.post("/food-items/usda", response_model=FoodItemResponse)
+def create_food_item_from_usda(
+    food_data: UsdaFoodCreate,
+    db: Session = Depends(get_db),
+):
+    """Create a food item from USDA FoodData Central"""
+    existing = (
+        db.query(FoodItem)
+        .filter(
+            FoodItem.source == "usda",
+            FoodItem.external_id == str(food_data.fdc_id),
+        )
+        .first()
+    )
+    if existing:
+        return existing
+
+    food = UsdaService.get_food(food_data.fdc_id)
+    nutrients = UsdaService.extract_nutrients(food)
+    serving_size_grams = UsdaService.get_serving_size_grams(food) or 100.0
+    nutrients = UsdaService.normalize_per_100g(nutrients, serving_size_grams)
+
+    food_item = FoodItem(
+        name=food.get("description") or "USDA Food",
+        serving_size="100 g",
+        serving_size_grams=100.0,
+        source="usda",
+        external_id=str(food_data.fdc_id),
+        calories=nutrients["calories"],
+        protein_g=nutrients["protein_g"],
+        carbs_g=nutrients["carbs_g"],
+        fat_g=nutrients["fat_g"],
+        fiber_g=nutrients["fiber_g"],
+        sodium_mg=nutrients["sodium_mg"],
+    )
     db.add(food_item)
     db.commit()
     db.refresh(food_item)
