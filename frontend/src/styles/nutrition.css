@@ -313,7 +313,7 @@
   .nutrition-summary {
     grid-template-columns: 1fr;
   }
-  
+
   .macros-grid {
     grid-template-columns: repeat(3, 1fr);
   }
