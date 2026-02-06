@@ -72,7 +72,7 @@ def test_update_profile_requires_auth(client: TestClient) -> None:
 def test_update_profile_success(client: TestClient) -> None:
     token = register_and_login(client)
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     update_data = {
         "sex": "male",
         "age": 30,
@@ -93,7 +93,7 @@ def test_update_profile_success(client: TestClient) -> None:
 def test_update_profile_partial(client: TestClient) -> None:
     token = register_and_login(client)
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     # Update only age
     response = client.put("/profile", headers=headers, json={"age": 25})
     assert response.status_code == 200
@@ -111,7 +111,7 @@ def test_nutrition_goals_without_profile(client: TestClient) -> None:
     """Test nutrition goals returns 400 when profile is incomplete"""
     token = register_and_login(client)
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     response = client.get("/profile/nutrition-goals", headers=headers)
     assert response.status_code == 400
     data = response.json()
@@ -123,7 +123,7 @@ def test_nutrition_goals_with_complete_profile(client: TestClient) -> None:
     """Test nutrition goals calculates personalized recommendations"""
     token = register_and_login(client)
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     # Update profile with complete info
     profile_data = {
         "sex": "male",
@@ -133,12 +133,12 @@ def test_nutrition_goals_with_complete_profile(client: TestClient) -> None:
         "goal": "lose",
     }
     client.put("/profile", headers=headers, json=profile_data)
-    
+
     # Get personalized nutrition goals
     response = client.get("/profile/nutrition-goals", headers=headers)
     assert response.status_code == 200
     data = response.json()
-    
+
     # Verify all goal fields are present
     assert "bmr" in data
     assert "tdee" in data
@@ -147,7 +147,7 @@ def test_nutrition_goals_with_complete_profile(client: TestClient) -> None:
     assert "carbs" in data
     assert "fat" in data
     assert "goal" in data
-    
+
     # For weight loss goal, calories should be reduced by 500
     # TDEE for 30yo male, 180cm, 75kg with moderate activity ~1970
     # For loss goal: 1970 - 500 = 1470
