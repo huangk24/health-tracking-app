@@ -93,16 +93,16 @@ def update_exercise_entry(
         ExerciseEntry.id == exercise_id,
         ExerciseEntry.user_id == user.id
     ).first()
-    
+
     if not db_exercise:
         raise HTTPException(status_code=404, detail="Exercise entry not found")
-    
+
     # Update fields if provided
     if exercise_update.name is not None:
         db_exercise.name = exercise_update.name
     if exercise_update.calories_burned is not None:
         db_exercise.calories_burned = exercise_update.calories_burned
-    
+
     db.commit()
     db.refresh(db_exercise)
     return db_exercise
@@ -119,10 +119,10 @@ def delete_exercise_entry(
         ExerciseEntry.id == exercise_id,
         ExerciseEntry.user_id == user.id
     ).first()
-    
+
     if not db_exercise:
         raise HTTPException(status_code=404, detail="Exercise entry not found")
-    
+
     db.delete(db_exercise)
     db.commit()
     return None
