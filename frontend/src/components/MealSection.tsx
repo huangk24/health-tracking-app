@@ -29,6 +29,7 @@ const MealSection: React.FC<MealSectionProps> = ({ meal, token, onEntryUpdated }
   const emoji = MEAL_EMOJIS[meal.meal_type];
   const label = MEAL_LABELS[meal.meal_type];
   const [selectedEntry, setSelectedEntry] = useState<CalorieEntry | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [editQuantity, setEditQuantity] = useState("");
   const [editUnit, setEditUnit] = useState("serving");
   const [editMealType, setEditMealType] = useState<MealType>(meal.meal_type);
@@ -101,11 +102,27 @@ const MealSection: React.FC<MealSectionProps> = ({ meal, token, onEntryUpdated }
     }
   };
 
+  const toggleExpanded = () => {
+    setIsExpanded((prev) => !prev);
+  };
+
   return (
     <div className="meal-section">
-      <h3 className="meal-header">
-        {emoji} {label}
-      </h3>
+      <div className="meal-header">
+        <div className="meal-title-block">
+          <span className="meal-emoji">{emoji}</span>
+          <div>
+            <h3 className="meal-title">{label}</h3>
+            <p className="meal-subtitle">{meal.entries.length} items</p>
+          </div>
+        </div>
+        <div className="meal-meta">
+          <span className="meal-kcal">{Math.round(meal.totals.calories)} kcal</span>
+          <button type="button" className="meal-toggle" onClick={toggleExpanded}>
+            {isExpanded ? "Hide nutrients" : "View nutrients"}
+          </button>
+        </div>
+      </div>
 
       {meal.entries.length === 0 ? (
         <p className="no-items">No foods logged yet</p>
@@ -132,24 +149,27 @@ const MealSection: React.FC<MealSectionProps> = ({ meal, token, onEntryUpdated }
             ))}
           </div>
 
-          <div className="meal-totals">
-            <div className="total-item">
-              <span>Calories:</span>
-              <strong>{Math.round(meal.totals.calories)}</strong>
+          {isExpanded && (
+            <div className="meal-details">
+              <div className="detail-chip calories">
+                <span>Calories</span>
+                <strong>{Math.round(meal.totals.calories)} kcal</strong>
+              </div>
+              <div className="detail-chip protein">
+                <span>Protein</span>
+                <strong>{Math.round(meal.totals.protein_g)}g</strong>
+              </div>
+              <div className="detail-chip carbs">
+                <span>Carbs</span>
+                <strong>{Math.round(meal.totals.carbs_g)}g</strong>
+              </div>
+              <div className="detail-chip fat">
+                <span>Fat</span>
+                <strong>{Math.round(meal.totals.fat_g)}g</strong>
+              </div>
+              <p className="detail-note">Tap a food row to edit quantities.</p>
             </div>
-            <div className="total-item">
-              <span>Protein:</span>
-              <strong>{Math.round(meal.totals.protein_g)}g</strong>
-            </div>
-            <div className="total-item">
-              <span>Carbs:</span>
-              <strong>{Math.round(meal.totals.carbs_g)}g</strong>
-            </div>
-            <div className="total-item">
-              <span>Fat:</span>
-              <strong>{Math.round(meal.totals.fat_g)}g</strong>
-            </div>
-          </div>
+          )}
         </>
       )}
 
