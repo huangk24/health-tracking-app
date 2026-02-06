@@ -171,7 +171,7 @@ def create_food_item(
     db: Session = Depends(get_db),
 ):
     """Create a new food item"""
-    food_item = FoodItem(**food_data.dict())
+    food_item = FoodItem(**food_data.model_dump())
     db.add(food_item)
     db.commit()
     db.refresh(food_item)
