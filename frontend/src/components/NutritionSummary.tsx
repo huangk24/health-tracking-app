@@ -38,9 +38,9 @@ const NutritionSummary: React.FC<NutritionSummaryProps> = ({
         fat: actual.fat_g,
       }
     : {
-        protein: goals.protein_g,
-        carbs: goals.carbs_g,
-        fat: goals.fat_g,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
       };
   const macroTotalBase =
     macroDataBase.protein + macroDataBase.carbs + macroDataBase.fat;

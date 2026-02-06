@@ -1,5 +1,5 @@
 # health-tracking-app
-A health tracking app allow users to keep track of their daily calories intake and consumption for weight gain and lost
+A health tracking app that helps users track daily calorie intake and consumption for weight gain or loss.
 
 ## Environment Setup
 - Create [backend/.env](backend/.env) with `USDA_API_KEY=<your_api_key>` to enable USDA FoodData Central search and imports.
@@ -46,7 +46,9 @@ Then open your browser to **http://localhost:5173**
 ## Features
 
 - **User Authentication** - Register and login with JWT tokens
-- **Food Tracking** - Log meals with USDA FoodData Central integration
+- **Nutrition Dashboard** - Calories ring, macro donut, and daily targets at a glance
+- **Meal Tracking** - Log meals with USDA FoodData Central integration
+- **Meal Details & Editing** - Expand meals for nutrient totals and edit or delete entries
 - **Exercise Logging** - Track exercises and calories burned
 - **Daily Summary** - View calorie intake vs. daily goals
 - **Responsive Design** - Works on desktop and mobile devices

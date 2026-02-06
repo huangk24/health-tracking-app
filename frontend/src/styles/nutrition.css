@@ -80,16 +80,18 @@
 }
 
 .calories-visual {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
   align-items: center;
-  justify-items: center;
+  justify-content: center;
+  flex: 1;
 }
 
 .calorie-chart {
   width: 130px;
   height: 130px;
+  margin: -14px auto 0;
 }
 
 .calorie-chart-value {
@@ -175,16 +177,17 @@
 }
 
 .macro-chart-body {
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
   align-items: center;
-  justify-items: center;
+  justify-content: center;
 }
 
 .macro-donut {
   width: 140px;
   height: 140px;
+  margin: 18px auto 0;
 }
 
 .macro-legend {
@@ -265,10 +268,10 @@
 }
 
 .macro-number {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--summary-ink);
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .macro-goal {
