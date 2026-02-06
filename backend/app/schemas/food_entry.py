@@ -92,9 +92,10 @@ class DailyNutritionSummary(BaseModel):
     date: date
     goals: NutritionTotals
     actual_intake: NutritionTotals
-    actual_consumption: NutritionTotals  # from activities
-    remaining: NutritionTotals  # goals - actual_intake - actual_consumption
+    actual_consumption: NutritionTotals  # from exercise activities
+    remaining: NutritionTotals  # goals - actual_intake + actual_consumption
     meals: list[MealSummary]
+    exercises: list[dict]  # Exercises as dicts to avoid serialization issues
 
 
 class UsdaFoodSearchResult(BaseModel):

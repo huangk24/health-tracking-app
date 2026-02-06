@@ -56,6 +56,28 @@ export interface DailyNutritionSummary {
   actual_consumption: NutritionTotals;
   remaining: NutritionTotals;
   meals: MealSummary[];
+  exercises: ExerciseEntry[];
+}
+
+export interface ExerciseEntry {
+  id: number;
+  user_id: number;
+  name: string;
+  calories_burned: number;
+  date: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ExerciseEntryCreate {
+  name: string;
+  calories_burned: number;
+  date: string;
+}
+
+export interface ExerciseEntryUpdate {
+  name?: string;
+  calories_burned?: number;
 }
 
 export interface UsdaFoodSearchResult {

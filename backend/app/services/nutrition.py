@@ -2,6 +2,7 @@ from datetime import date, datetime, timedelta
 from sqlalchemy.orm import Session
 
 from app.models.food_entry import CalorieEntry, MealType
+from app.models.exercise import ExerciseEntry
 from app.schemas.food_entry import (
     NutritionTotals,
     MealSummary,
@@ -35,6 +36,16 @@ class NutritionService:
             .all()
         )
 
+        # Get all exercise entries for the day
+        exercises = (
+            db.query(ExerciseEntry)
+            .filter(
+                ExerciseEntry.user_id == user_id,
+                ExerciseEntry.date == target_date,
+            )
+            .all()
+        )
+
         # Group entries by meal type
         meals_by_type = {}
         for meal_type in MealType:
@@ -58,40 +69,57 @@ class NutritionService:
                     )
                 )
 
-        # Calculate goals and remaining
-        goals = NutritionTotals(**NutritionService.DEFAULT_GOALS)
+        # Calculate exercise consumption
+        total_calories_burned = ExerciseEntry.get_total_calories_burned(exercises)
         actual_consumption = NutritionTotals(
-            calories=0,
+            calories=total_calories_burned,
             protein_g=0,
             carbs_g=0,
             fat_g=0,
             fiber_g=0,
             sodium_mg=0,
-        )  # placeholder - no activity tracking yet
+        )
+
+        # Calculate goals and remaining
+        goals = NutritionTotals(**NutritionService.DEFAULT_GOALS)
 
         remaining = NutritionTotals(
             calories=max(
-                0, goals.calories - actual_intake.calories - actual_consumption.calories
+                0, goals.calories - actual_intake.calories + actual_consumption.calories
             ),
             protein_g=max(
-                0, goals.protein_g - actual_intake.protein_g - actual_consumption.protein_g
+                0, goals.protein_g - actual_intake.protein_g + actual_consumption.protein_g
             ),
             carbs_g=max(
-                0, goals.carbs_g - actual_intake.carbs_g - actual_consumption.carbs_g
+                0, goals.carbs_g - actual_intake.carbs_g + actual_consumption.carbs_g
             ),
             fat_g=max(
-                0, goals.fat_g - actual_intake.fat_g - actual_consumption.fat_g
+                0, goals.fat_g - actual_intake.fat_g + actual_consumption.fat_g
             ),
             fiber_g=max(
-                0, goals.fiber_g - actual_intake.fiber_g - actual_consumption.fiber_g
+                0, goals.fiber_g - actual_intake.fiber_g + actual_consumption.fiber_g
             ),
             sodium_mg=max(
                 0,
                 goals.sodium_mg
                 - actual_intake.sodium_mg
-                - actual_consumption.sodium_mg,
+                + actual_consumption.sodium_mg,
             ),
         )
+
+        # Convert exercises to dicts for serialization
+        exercise_dicts = [
+            {
+                "id": ex.id,
+                "user_id": ex.user_id,
+                "name": ex.name,
+                "calories_burned": ex.calories_burned,
+                "date": ex.date.isoformat(),
+                "created_at": ex.created_at.isoformat(),
+                "updated_at": ex.updated_at.isoformat(),
+            }
+            for ex in exercises
+        ]
 
         return DailyNutritionSummary(
             date=target_date,
@@ -100,6 +128,7 @@ class NutritionService:
             actual_consumption=actual_consumption,
             remaining=remaining,
             meals=meals,
+            exercises=exercise_dicts,
         )
 
     @staticmethod
