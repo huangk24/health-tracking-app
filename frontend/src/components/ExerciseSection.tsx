@@ -83,12 +83,19 @@ const ExerciseSection: React.FC<ExerciseSectionProps> = ({ exercises, token, onE
   };
 
   return (
-    <div className="meal-section">
+    <div className="meal-section exercise-card">
       <div className="meal-header">
-        <h3>
+        <div className="meal-title-block">
           <span className="meal-emoji">🏃</span>
-          <span className="meal-label">Exercise</span>
-        </h3>
+          <div>
+            <h3 className="meal-title">Exercise</h3>
+            <p className="meal-subtitle">{exercises.length} activities</p>
+          </div>
+        </div>
+        <div className="meal-meta">
+          <span className="meal-kcal">{totalCaloriesBurned.toFixed(0)} kcal</span>
+          <span className="meal-chip">Total burned</span>
+        </div>
       </div>
 
       <div className="meal-entries">
@@ -102,11 +109,6 @@ const ExerciseSection: React.FC<ExerciseSectionProps> = ({ exercises, token, onE
             <span className="entry-calories">{exercise.calories_burned.toFixed(0)} cal</span>
           </button>
         ))}
-      </div>
-
-      <div className="meal-footer">
-        <span className="meal-footer-label">Total burned</span>
-        <span className="meal-footer-value">{totalCaloriesBurned.toFixed(0)} cal</span>
       </div>
 
       {selectedExercise && (
