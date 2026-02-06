@@ -3,11 +3,14 @@ from sqlalchemy.orm import Session
 
 from app.models.food_entry import CalorieEntry, MealType
 from app.models.exercise import ExerciseEntry
+from app.models.user import User
 from app.schemas.food_entry import (
     NutritionTotals,
     MealSummary,
     DailyNutritionSummary,
 )
+from app.services.calculations import get_nutrition_goals
+
 
 
 class NutritionService:
@@ -23,9 +26,15 @@ class NutritionService:
 
     @staticmethod
     def calculate_daily_nutrition(
-        user_id: int, target_date: date, db: Session
+        user_id: int, target_date: date, db: Session, user: User = None
     ) -> DailyNutritionSummary:
         """Calculate daily nutrition summary for a user"""
+        # If user object not provided, fetch it
+        if user is None:
+            user = db.query(User).filter(User.id == user_id).first()
+            if not user:
+                raise ValueError("User not found")
+
         # Get all entries for the day
         entries = (
             db.query(CalorieEntry)
@@ -80,8 +89,26 @@ class NutritionService:
             sodium_mg=0,
         )
 
-        # Calculate goals and remaining
-        goals = NutritionTotals(**NutritionService.DEFAULT_GOALS)
+        # Calculate personalized goals based on user profile
+        if user.sex and user.age and user.height and user.weight:
+            nutrition_goals = get_nutrition_goals(
+                sex=user.sex,
+                age=user.age,
+                height=user.height,
+                weight=user.weight,
+                goal=user.goal or "maintain"
+            )
+            goals = NutritionTotals(
+                calories=nutrition_goals["calories"],
+                protein_g=nutrition_goals["protein"],
+                carbs_g=nutrition_goals["carbs"],
+                fat_g=nutrition_goals["fat"],
+                fiber_g=25,  # Generic recommendation
+                sodium_mg=2300,  # Generic recommendation
+            )
+        else:
+            # Use default goals if user profile is incomplete
+            goals = NutritionTotals(**NutritionService.DEFAULT_GOALS)
 
         remaining = NutritionTotals(
             calories=max(

@@ -24,6 +24,16 @@ class UserResponse(BaseModel):
     age: Optional[int] = None
     height: Optional[int] = None
     weight: Optional[int] = None
+    goal: Optional[str] = None
+
+
+class UserUpdate(BaseModel):
+    """Schema for user profile update"""
+    sex: Optional[str] = None
+    age: Optional[int] = None
+    height: Optional[int] = None  # in cm
+    weight: Optional[int] = None  # in kg
+    goal: Optional[str] = None  # lose, maintain, gain
 
 
 class Token(BaseModel):

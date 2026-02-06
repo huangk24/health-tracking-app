@@ -13,6 +13,7 @@ class User(Base):
     age = Column(Integer, nullable=True)
     height = Column(Integer, nullable=True)
     weight = Column(Integer, nullable=True)
+    goal = Column(String, nullable=True, default="maintain")  # lose, maintain, gain
 
     # Relationships
     calorie_entries = relationship("CalorieEntry", back_populates="user")

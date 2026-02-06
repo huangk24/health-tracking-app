@@ -45,6 +45,7 @@ interface UserResponse {
   age?: number;
   height?: number;
   weight?: number;
+  goal?: string;
 }
 
 export const authApi = {
@@ -245,5 +246,33 @@ export const exerciseApi = {
       throw new Error(detail);
     }
     return;
+  },
+};
+export const profileApi = {
+  getProfile: async (token?: string): Promise<UserResponse> => {
+    return api.get("/profile", token);
+  },
+
+  updateProfile: async (data: Partial<UserResponse>, token?: string): Promise<UserResponse> => {
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await fetch(`${API_BASE_URL}/profile`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      let detail = response.statusText || "Request failed";
+      try {
+        const error = await response.json();
+        detail = error.detail || JSON.stringify(error);
+      } catch (err) {
+        // Ignore parsing errors to preserve default detail.
+      }
+      throw new Error(detail);
+    }
+    return response.json();
   },
 };

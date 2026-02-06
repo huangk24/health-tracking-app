@@ -69,6 +69,29 @@ body {
   font-size: 32px;
 }
 
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.profile-btn {
+  padding: 10px 20px;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.profile-btn:hover {
+  background-color: #764ba2;
+  transform: translateY(-2px);
+}
+
 .logout-btn {
   padding: 10px 20px;
   background-color: #dc3545;
@@ -83,6 +106,7 @@ body {
 .logout-btn:hover {
   background-color: #c82333;
 }
+
 
 .loading {
   display: flex;

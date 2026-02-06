@@ -83,13 +83,22 @@ const DashboardPage: React.FC = () => {
     navigate("/login");
   };
 
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
   return (
     <div className="dashboard-page">
       <div className="dashboard-header">
         <h1>Welcome, {user?.username}!</h1>
-        <button onClick={handleLogout} className="logout-btn">
-          Logout
-        </button>
+        <div className="header-actions">
+          <button onClick={handleProfileClick} className="profile-btn">
+            👤 Profile
+          </button>
+          <button onClick={handleLogout} className="logout-btn">
+            Logout
+          </button>
+        </div>
       </div>
 
       {loading && (

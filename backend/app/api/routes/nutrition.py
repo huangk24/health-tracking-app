@@ -69,7 +69,8 @@ def get_daily_nutrition(
 ):
     """Get daily nutrition summary for a user"""
     target_date = date.fromisoformat(date_param) if date_param else date.today()
-    return NutritionService.calculate_daily_nutrition(user.id, target_date, db)
+    return NutritionService.calculate_daily_nutrition(user.id, target_date, db, user)
+
 
 
 @router.post("/entries", response_model=CalorieEntryResponse)
