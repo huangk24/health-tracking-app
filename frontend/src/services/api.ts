@@ -191,3 +191,59 @@ export const nutritionApi = {
     return api.post("/nutrition/food-items/usda", { fdc_id: fdcId }, token);
   },
 };
+
+export const exerciseApi = {
+  createExercise: async (data: any, token?: string) => {
+    return api.post("/nutrition/exercises", data, token);
+  },
+
+  getExercises: async (date: string, token?: string) => {
+    const url = `/nutrition/exercises?date_filter=${date}`;
+    return api.get(url, token);
+  },
+
+  updateExercise: async (exerciseId: number, data: any, token?: string) => {
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await fetch(`${API_BASE_URL}/nutrition/exercises/${exerciseId}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      let detail = response.statusText || "Request failed";
+      try {
+        const error = await response.json();
+        detail = error.detail || JSON.stringify(error);
+      } catch (err) {
+        // Ignore parsing errors to preserve default detail.
+      }
+      throw new Error(detail);
+    }
+    return response.json();
+  },
+
+  deleteExercise: async (exerciseId: number, token?: string) => {
+    const headers: HeadersInit = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await fetch(`${API_BASE_URL}/nutrition/exercises/${exerciseId}`, {
+      method: "DELETE",
+      headers,
+    });
+    if (!response.ok) {
+      let detail = response.statusText || "Request failed";
+      try {
+        const error = await response.json();
+        detail = error.detail || JSON.stringify(error);
+      } catch (err) {
+        // Ignore parsing errors to preserve default detail.
+      }
+      throw new Error(detail);
+    }
+    return;
+  },
+};

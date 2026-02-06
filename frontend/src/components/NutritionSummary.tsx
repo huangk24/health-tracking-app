@@ -6,13 +6,17 @@ interface NutritionSummaryProps {
   goals: NutritionTotals;
   actual: NutritionTotals;
   remaining: NutritionTotals;
+  consumption: NutritionTotals; // calories burned from exercise
 }
 
 const NutritionSummary: React.FC<NutritionSummaryProps> = ({
   goals,
   actual,
   remaining,
+  consumption,
 }) => {
+  // Calculate adjusted calorie goal: base goal + exercise burned
+  const adjustedGoal = goals.calories + consumption.calories;
   const proteinPercent = (actual.protein_g / goals.protein_g) * 100;
   const carbsPercent = (actual.carbs_g / goals.carbs_g) * 100;
   const fatPercent = (actual.fat_g / goals.fat_g) * 100;
@@ -24,7 +28,7 @@ const NutritionSummary: React.FC<NutritionSummaryProps> = ({
         <h3>Calories</h3>
         <div className="calorie-display">
           <div className="calorie-number">{Math.round(actual.calories)}</div>
-          <div className="calorie-goals">/ {Math.round(goals.calories)}</div>
+          <div className="calorie-goals">/ {Math.round(adjustedGoal)}</div>
         </div>
         <div className="calorie-remaining">
           {remaining.calories > 0

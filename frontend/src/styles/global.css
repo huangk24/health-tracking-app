@@ -127,6 +127,10 @@ body {
   margin-top: 40px;
 }
 
+.exercise-section {
+  margin-top: 30px;
+}
+
 .meals-header {
   display: flex;
   justify-content: space-between;
@@ -139,6 +143,23 @@ body {
   color: #333;
   font-size: 24px;
   font-weight: 600;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.header-buttons .add-food-container {
+  margin: 0;
+}
+
+.header-buttons .add-food-btn {
+  position: static;
+  white-space: nowrap;
+  padding: 12px 20px;
+  font-size: 15px;
 }
 
 .no-items {
@@ -157,5 +178,19 @@ body {
 
   .meals-header h2 {
     font-size: 20px;
+  }
+
+  .header-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .header-buttons .add-food-container {
+    width: 100%;
+  }
+
+  .header-buttons .add-food-btn {
+    width: 100%;
   }
 }

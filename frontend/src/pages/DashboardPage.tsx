@@ -6,7 +6,23 @@ import { DailyNutritionSummary } from "../types/nutrition";
 import NutritionSummary from "../components/NutritionSummary";
 import MealSection from "../components/MealSection";
 import AddFoodForm from "../components/AddFoodForm";
+import AddExerciseForm from "../components/AddExerciseForm";
+import ExerciseSection from "../components/ExerciseSection";
 import "../styles/global.css";
+
+// Get API base URL (same logic as api.ts)
+const getApiBaseUrl = () => {
+  if (typeof window === 'undefined') return 'http://localhost:8000';
+
+  const hostname = window.location.hostname;
+
+  if (hostname.includes('.app.github.dev')) {
+    const backendHostname = hostname.replace(/-\d+\.app\.github\.dev/, '-8000.app.github.dev');
+    return `https://${backendHostname}`;
+  }
+
+  return 'http://localhost:8000';
+};
 
 const DashboardPage: React.FC = () => {
   const { user, token, logout } = useAuth();
@@ -34,7 +50,28 @@ const DashboardPage: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchNutrition();
+    // Health check: verify backend is reachable before loading nutrition data
+    const checkBackendHealth = async () => {
+      try {
+        const response = await fetch(`${getApiBaseUrl()}/health`);
+        if (!response.ok) {
+          throw new Error("Backend returned error");
+        }
+      } catch (err) {
+        setError(
+          "⚠️ Backend server is not responding. Make sure to start it with: cd backend && uvicorn app.main:app --reload"
+        );
+        setLoading(false);
+        return;
+      }
+
+      // Backend is healthy, fetch nutrition data
+      fetchNutrition();
+    };
+
+    if (token) {
+      checkBackendHealth();
+    }
   }, [token]);
 
   const handleFoodAdded = () => {
@@ -73,12 +110,20 @@ const DashboardPage: React.FC = () => {
             goals={nutritionData.goals}
             actual={nutritionData.actual_intake}
             remaining={nutritionData.remaining}
+            consumption={nutritionData.actual_consumption}
           />
 
           <div className="meals-section">
             <div className="meals-header">
-              <h2>Meals</h2>
-              <AddFoodForm token={token!} onFoodAdded={handleFoodAdded} />
+              <h2>Meals & Exercise</h2>
+              <div className="header-buttons">
+                <AddFoodForm token={token!} onFoodAdded={handleFoodAdded} />
+                <AddExerciseForm
+                  token={token!}
+                  date={nutritionData.date}
+                  onExerciseAdded={handleFoodAdded}
+                />
+              </div>
             </div>
 
             {nutritionData.meals.length === 0 ? (
@@ -93,6 +138,16 @@ const DashboardPage: React.FC = () => {
                     onEntryUpdated={handleFoodAdded}
                   />
                 ))}
+              </div>
+            )}
+
+            {nutritionData.exercises && nutritionData.exercises.length > 0 && (
+              <div className="exercise-section">
+                <ExerciseSection
+                  exercises={nutritionData.exercises}
+                  token={token!}
+                  onExerciseUpdated={handleFoodAdded}
+                />
               </div>
             )}
           </div>
