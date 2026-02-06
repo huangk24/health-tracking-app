@@ -69,7 +69,8 @@ def get_daily_nutrition(
 ):
     """Get daily nutrition summary for a user"""
     target_date = date.fromisoformat(date_param) if date_param else date.today()
-    return NutritionService.calculate_daily_nutrition(user.id, target_date, db)
+    return NutritionService.calculate_daily_nutrition(user.id, target_date, db, user)
+
 
 
 @router.post("/entries", response_model=CalorieEntryResponse)
@@ -170,7 +171,7 @@ def create_food_item(
     db: Session = Depends(get_db),
 ):
     """Create a new food item"""
-    food_item = FoodItem(**food_data.dict())
+    food_item = FoodItem(**food_data.model_dump())
     db.add(food_item)
     db.commit()
     db.refresh(food_item)

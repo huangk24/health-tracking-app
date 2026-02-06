@@ -3,14 +3,18 @@ const getApiBaseUrl = () => {
   if (typeof window === 'undefined') return 'http://localhost:8000';
 
   const hostname = window.location.hostname;
+  const protocol = window.location.protocol;
 
   console.log('Current hostname:', hostname);
+  console.log('Current protocol:', protocol);
 
   // Codespaces URL pattern: {name}-{port}.app.github.dev
   if (hostname.includes('.app.github.dev')) {
-    // Replace the frontend port (e.g., 5174) with backend port (8000)
-    const backendHostname = hostname.replace(/-\d+\.app\.github\.dev/, '-8000.app.github.dev');
-    const backendUrl = `https://${backendHostname}`;
+    // Extract the base name by removing the port part
+    // Format: "name-port.app.github.dev" -> "name-8000.app.github.dev"
+    const baseHostname = hostname.replace(/-\d+\.app\.github\.dev/, '');
+    const backendHostname = `${baseHostname}-8000.app.github.dev`;
+    const backendUrl = `${protocol}//${backendHostname}`;
     console.log('Detected Codespaces, using:', backendUrl);
     return backendUrl;
   }
@@ -45,6 +49,7 @@ interface UserResponse {
   age?: number;
   height?: number;
   weight?: number;
+  goal?: string;
 }
 
 export const authApi = {
@@ -245,5 +250,33 @@ export const exerciseApi = {
       throw new Error(detail);
     }
     return;
+  },
+};
+export const profileApi = {
+  getProfile: async (token?: string): Promise<UserResponse> => {
+    return api.get("/profile", token);
+  },
+
+  updateProfile: async (data: Partial<UserResponse>, token?: string): Promise<UserResponse> => {
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await fetch(`${API_BASE_URL}/profile`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      let detail = response.statusText || "Request failed";
+      try {
+        const error = await response.json();
+        detail = error.detail || JSON.stringify(error);
+      } catch (err) {
+        // Ignore parsing errors to preserve default detail.
+      }
+      throw new Error(detail);
+    }
+    return response.json();
   },
 };
