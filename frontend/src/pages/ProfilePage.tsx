@@ -15,12 +15,12 @@ interface UserProfile {
 }
 
 const ProfilePage: React.FC = () => {
-  const { user, token, logout } = useAuth();
+  const { token, logout } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>();
+  const [success, setSuccess] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
@@ -39,7 +39,7 @@ const ProfilePage: React.FC = () => {
 
     const fetchProfile = async () => {
       try {
-        const data = await profileApi.getProfile(token);
+        const data = await profileApi.getProfile(token || undefined);
         setProfile(data);
         setFormData({
           sex: data.sex || "",
@@ -48,7 +48,7 @@ const ProfilePage: React.FC = () => {
           weight: data.weight?.toString() || "",
           goal: data.goal || "maintain",
         });
-        setError(null);
+        setError(undefined);
       } catch (err: any) {
         setError(err.message || "Failed to load profile");
       } finally {
@@ -71,8 +71,8 @@ const ProfilePage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
-    setSuccess(null);
+    setError(undefined);
+    setSuccess(undefined);
 
     try {
       const updateData = {
@@ -83,14 +83,14 @@ const ProfilePage: React.FC = () => {
         goal: formData.goal,
       };
 
-      const updatedProfile = await profileApi.updateProfile(updateData, token);
-      setProfile(updatedProfile);
+      const updatedProfile = await profileApi.updateProfile(updateData, token || undefined);
+      setProfile(updatedProfile as any);
       setSuccess("Profile updated successfully!");
       setIsEditing(false);
 
       // Refresh after 2 seconds
       setTimeout(() => {
-        setSuccess(null);
+        setSuccess(undefined);
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Failed to update profile");
@@ -113,7 +113,12 @@ const ProfilePage: React.FC = () => {
   return (
     <div className="profile-page">
       <div className="profile-header">
-        <h1>My Profile</h1>
+        <div className="header-left">
+          <button onClick={() => navigate("/dashboard")} className="btn-back">
+            ← Back to Dashboard
+          </button>
+          <h1>My Profile</h1>
+        </div>
         <button onClick={handleLogout} className="logout-btn">
           Logout
         </button>
@@ -251,7 +256,7 @@ const ProfilePage: React.FC = () => {
                 className="btn-secondary"
                 onClick={() => {
                   setIsEditing(false);
-                  setError(null);
+                  setError(undefined);
                 }}
               >
                 Cancel

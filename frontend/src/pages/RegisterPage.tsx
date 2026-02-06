@@ -30,7 +30,7 @@ const RegisterPage: React.FC = () => {
 
     try {
       await register(username, password);
-      navigate("/dashboard");
+      navigate("/profile");
     } catch (err: any) {
       setError(err.message || "Registration failed. Username may already exist.");
     } finally {

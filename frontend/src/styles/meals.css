@@ -42,6 +42,26 @@
   flex: 1;
 }
 
+.meal-footer {
+  background: #f5f7fa;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e0e0e0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.meal-footer-label {
+  color: #999;
+}
+
+.meal-footer-value {
+  color: #333;
+  font-weight: 600;
+}
+
 .meal-entry {
   width: 100%;
   background: none;

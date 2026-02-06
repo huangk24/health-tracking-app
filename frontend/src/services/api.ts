@@ -3,14 +3,18 @@ const getApiBaseUrl = () => {
   if (typeof window === 'undefined') return 'http://localhost:8000';
 
   const hostname = window.location.hostname;
+  const protocol = window.location.protocol;
 
   console.log('Current hostname:', hostname);
+  console.log('Current protocol:', protocol);
 
   // Codespaces URL pattern: {name}-{port}.app.github.dev
   if (hostname.includes('.app.github.dev')) {
-    // Replace the frontend port (e.g., 5174) with backend port (8000)
-    const backendHostname = hostname.replace(/-\d+\.app\.github\.dev/, '-8000.app.github.dev');
-    const backendUrl = `https://${backendHostname}`;
+    // Extract the base name by removing the port part
+    // Format: "name-port.app.github.dev" -> "name-8000.app.github.dev"
+    const baseHostname = hostname.replace(/-\d+\.app\.github\.dev/, '');
+    const backendHostname = `${baseHostname}-8000.app.github.dev`;
+    const backendUrl = `${protocol}//${backendHostname}`;
     console.log('Detected Codespaces, using:', backendUrl);
     return backendUrl;
   }
