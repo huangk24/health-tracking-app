@@ -1,5 +1,18 @@
-# health-tracking-app
+# Health Tracking App
 A health tracking app that helps users track daily calorie intake and consumption for weight gain or loss.
+
+## What It Does
+- **Daily dashboard** showing calories, macros, and remaining targets.
+- **Meals and exercise logged by day** with a PST-based date selector.
+- **USDA FoodData Central search** for quick food logging.
+- **Edit and delete entries** for any day, including past days.
+
+## Tech Stack
+- **Frontend**: React + Vite + TypeScript
+- **Backend**: FastAPI + SQLAlchemy
+- **Database**: SQLite (auto-creates tables on startup)
+- **Auth**: JWT tokens + bcrypt password hashing
+- **Testing**: pytest (backend) + vitest (frontend)
 
 ## Environment Setup
 - Create [backend/.env](backend/.env) with `USDA_API_KEY=<your_api_key>` to enable USDA FoodData Central search and imports.
@@ -51,4 +64,5 @@ Then open your browser to **http://localhost:5173**
 - **Meal Details & Editing** - Expand meals for nutrient totals and edit or delete entries
 - **Exercise Logging** - Track exercises and calories burned
 - **Daily Summary** - View calorie intake vs. daily goals
+- **PST Date Selector** - Browse and edit historical days, defaulting to current day in PST
 - **Responsive Design** - Works on desktop and mobile devices

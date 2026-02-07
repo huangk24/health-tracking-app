@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from datetime import date
+from datetime import date as Date
 from enum import Enum
 
 
@@ -52,6 +52,7 @@ class CalorieEntryCreate(BaseModel):
     quantity: float = 1.0
     unit: str = "serving"
     meal_type: MealType
+    date: Date | None = None
 
 
 class CalorieEntryUpdate(BaseModel):
@@ -75,7 +76,7 @@ class CalorieEntryResponse(BaseModel):
     quantity: float
     unit: str
     meal_type: MealType
-    date: date
+    date: Date
     food_item: FoodItemResponse
     totals: NutritionTotals
 
@@ -89,7 +90,7 @@ class MealSummary(BaseModel):
 
 
 class DailyNutritionSummary(BaseModel):
-    date: date
+    date: Date
     goals: NutritionTotals
     actual_intake: NutritionTotals
     actual_consumption: NutritionTotals  # from exercise activities

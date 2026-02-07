@@ -29,6 +29,10 @@ const NutritionSummary: React.FC<NutritionSummaryProps> = ({
   const fatPercent = (actual.fat_g / goals.fat_g) * 100;
   const caloriesOver = Math.max(actual.calories - safeGoal, 0);
   const caloriesRemaining = Math.max(safeGoal - actual.calories, 0);
+  const isCaloriesOver = actual.calories > safeGoal;
+  const isProteinOver = actual.protein_g > goals.protein_g;
+  const isCarbsOver = actual.carbs_g > goals.carbs_g;
+  const isFatOver = actual.fat_g > goals.fat_g;
 
   const macroTotals = actual.protein_g + actual.carbs_g + actual.fat_g;
   const macroDataBase = macroTotals > 0
@@ -75,6 +79,12 @@ const NutritionSummary: React.FC<NutritionSummaryProps> = ({
               : `${Math.round(caloriesOver)} over`}
           </div>
         </div>
+
+        {isCaloriesOver && (
+          <div className="over-warning">
+            Over daily calories
+          </div>
+        )}
 
         <div className="calories-visual">
           <div className="calorie-chart">
@@ -182,6 +192,7 @@ const NutritionSummary: React.FC<NutritionSummaryProps> = ({
           <h4>Protein</h4>
           <div className="macro-number">{Math.round(actual.protein_g)}g</div>
           <div className="macro-goal">Goal: {Math.round(goals.protein_g)}g</div>
+          {isProteinOver && <div className="over-warning">Over target</div>}
           <div className="progress-bar">
             <div
               className="progress-fill"
@@ -196,6 +207,7 @@ const NutritionSummary: React.FC<NutritionSummaryProps> = ({
           <h4>Carbs</h4>
           <div className="macro-number">{Math.round(actual.carbs_g)}g</div>
           <div className="macro-goal">Goal: {Math.round(goals.carbs_g)}g</div>
+          {isCarbsOver && <div className="over-warning">Over target</div>}
           <div className="progress-bar">
             <div
               className="progress-fill"
@@ -210,6 +222,7 @@ const NutritionSummary: React.FC<NutritionSummaryProps> = ({
           <h4>Fat</h4>
           <div className="macro-number">{Math.round(actual.fat_g)}g</div>
           <div className="macro-goal">Goal: {Math.round(goals.fat_g)}g</div>
+          {isFatOver && <div className="over-warning">Over target</div>}
           <div className="progress-bar">
             <div
               className="progress-fill"
