@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Header
+from fastapi import APIRouter, Depends, HTTPException, status, Header, Query
 from sqlalchemy.orm import Session
 from datetime import date, datetime
 from typing import Optional
@@ -21,6 +21,7 @@ from app.services.nutrition import NutritionService
 from app.services.auth import decode_token
 from app.services.user import get_user_by_username
 from app.services.usda import UsdaService
+from app.utils.time import pst_today
 
 router = APIRouter(prefix="/nutrition", tags=["nutrition"])
 
@@ -63,12 +64,12 @@ def get_current_user(
 
 @router.get("/daily", response_model=DailyNutritionSummary)
 def get_daily_nutrition(
-    date_param: Optional[str] = None,
+    date_param: Optional[str] = Query(default=None, alias="date"),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
     """Get daily nutrition summary for a user"""
-    target_date = date.fromisoformat(date_param) if date_param else date.today()
+    target_date = date.fromisoformat(date_param) if date_param else pst_today()
     return NutritionService.calculate_daily_nutrition(user.id, target_date, db, user)
 
 
@@ -94,6 +95,7 @@ def create_calorie_entry(
         quantity=entry_data.quantity,
         unit=entry_data.unit,
         meal_type=entry_data.meal_type,
+        date=entry_data.date or pst_today(),
     )
     db.add(entry)
     db.commit()

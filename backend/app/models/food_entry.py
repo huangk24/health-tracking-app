@@ -4,6 +4,7 @@ from datetime import datetime, date
 from enum import Enum
 
 from app.database import Base
+from app.utils.time import pst_today
 
 
 class MealType(str, Enum):
@@ -43,7 +44,7 @@ class CalorieEntry(Base):
     quantity = Column(Float, default=1.0)  # How many servings
     unit = Column(String, default="serving")  # "serving", "g", "ml", etc.
     meal_type = Column(SQLEnum(MealType), default=MealType.SNACK)
-    date = Column(Date, default=date.today, index=True)
+    date = Column(Date, default=pst_today, index=True)
     created_at = Column(String, default=lambda: datetime.now().isoformat())
 
     # Relationships

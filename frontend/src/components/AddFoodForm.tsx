@@ -5,6 +5,7 @@ import "../styles/add-food-form.css";
 
 interface AddFoodFormProps {
   token: string;
+  date: string;
   onFoodAdded: () => void;
 }
 
@@ -16,7 +17,7 @@ const MEAL_OPTIONS: { value: MealType; label: string }[] = [
   { value: "in_between", label: "In Between ☕" },
 ];
 
-const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, onFoodAdded }) => {
+const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, date, onFoodAdded }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -127,6 +128,7 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, onFoodAdded }) => {
             quantity: parseFloat(usdaGrams),
             unit: "g",
             meal_type: formData.mealType,
+            date: date,
           },
           token
         );
@@ -159,6 +161,7 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, onFoodAdded }) => {
             quantity: 1,
             unit: "serving",
             meal_type: formData.mealType,
+            date: date,
           },
           token
         );
