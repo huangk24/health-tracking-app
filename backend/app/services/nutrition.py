@@ -28,7 +28,7 @@ class NutritionService:
     def calculate_daily_nutrition(
         user_id: int, target_date: date, db: Session, user: User = None
     ) -> DailyNutritionSummary:
-        """Calculate daily nutrition summary for a user"""
+        """Calculate daily nutrition summary for a user."""
         # If user object not provided, fetch it
         if user is None:
             user = db.query(User).filter(User.id == user_id).first()
@@ -89,26 +89,7 @@ class NutritionService:
             sodium_mg=0,
         )
 
-        # Calculate personalized goals based on user profile
-        if user.sex and user.age and user.height and user.weight:
-            nutrition_goals = get_nutrition_goals(
-                sex=user.sex,
-                age=user.age,
-                height=user.height,
-                weight=user.weight,
-                goal=user.goal or "maintain"
-            )
-            goals = NutritionTotals(
-                calories=nutrition_goals["calories"],
-                protein_g=nutrition_goals["protein"],
-                carbs_g=nutrition_goals["carbs"],
-                fat_g=nutrition_goals["fat"],
-                fiber_g=25,  # Generic recommendation
-                sodium_mg=2300,  # Generic recommendation
-            )
-        else:
-            # Use default goals if user profile is incomplete
-            goals = NutritionTotals(**NutritionService.DEFAULT_GOALS)
+        goals = NutritionService._resolve_goals(user)
 
         remaining = NutritionTotals(
             calories=max(
@@ -134,19 +115,7 @@ class NutritionService:
             ),
         )
 
-        # Convert exercises to dicts for serialization
-        exercise_dicts = [
-            {
-                "id": ex.id,
-                "user_id": ex.user_id,
-                "name": ex.name,
-                "calories_burned": ex.calories_burned,
-                "date": ex.date.isoformat(),
-                "created_at": ex.created_at.isoformat(),
-                "updated_at": ex.updated_at.isoformat(),
-            }
-            for ex in exercises
-        ]
+        exercise_dicts = NutritionService._serialize_exercises(exercises)
 
         return DailyNutritionSummary(
             date=target_date,
@@ -176,3 +145,42 @@ class NutritionService:
                 totals[key] += entry_totals[key]
 
         return NutritionTotals(**totals)
+
+    @staticmethod
+    def _resolve_goals(user: User) -> NutritionTotals:
+        """Return personalized nutrition goals or fallback defaults."""
+        if user.sex and user.age and user.height and user.weight:
+            nutrition_goals = get_nutrition_goals(
+                sex=user.sex,
+                age=user.age,
+                height=user.height,
+                weight=user.weight,
+                goal=user.goal or "maintain",
+            )
+            return NutritionTotals(
+                calories=nutrition_goals["calories"],
+                protein_g=nutrition_goals["protein"],
+                carbs_g=nutrition_goals["carbs"],
+                fat_g=nutrition_goals["fat"],
+                fiber_g=25,  # Generic recommendation
+                sodium_mg=2300,  # Generic recommendation
+            )
+
+        # Use default goals if user profile is incomplete.
+        return NutritionTotals(**NutritionService.DEFAULT_GOALS)
+
+    @staticmethod
+    def _serialize_exercises(exercises: list[ExerciseEntry]) -> list[dict]:
+        """Convert exercise ORM rows into JSON-serializable dicts."""
+        return [
+            {
+                "id": ex.id,
+                "user_id": ex.user_id,
+                "name": ex.name,
+                "calories_burned": ex.calories_burned,
+                "date": ex.date.isoformat(),
+                "created_at": ex.created_at.isoformat(),
+                "updated_at": ex.updated_at.isoformat(),
+            }
+            for ex in exercises
+        ]

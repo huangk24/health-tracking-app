@@ -29,7 +29,7 @@ router = APIRouter(prefix="/nutrition", tags=["nutrition"])
 def get_current_user(
     authorization: Optional[str] = Header(None), db: Session = Depends(get_db)
 ) -> User:
-    """Extract current user from Bearer token"""
+    """Extract current user from Bearer token for request auth."""
     if not authorization:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
