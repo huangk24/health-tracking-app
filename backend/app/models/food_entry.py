@@ -54,6 +54,7 @@ class CalorieEntry(Base):
     def get_totals(self):
         """Calculate total nutrition for this entry"""
         unit = (self.unit or "serving").lower()
+        # Normalize by gram-based serving size when quantity is in grams.
         if unit in {"g", "gram", "grams"} and self.food_item.serving_size_grams:
             multiplier = self.quantity / self.food_item.serving_size_grams
         else:

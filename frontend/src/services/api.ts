@@ -1,5 +1,5 @@
 // Detect backend URL based on environment
-const getApiBaseUrl = () => {
+export const getApiBaseUrl = () => {
   if (typeof window === 'undefined') return 'http://localhost:8000';
 
   const hostname = window.location.hostname;

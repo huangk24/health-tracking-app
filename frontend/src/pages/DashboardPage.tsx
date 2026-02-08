@@ -1,76 +1,21 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { nutritionApi } from "../services/api";
+import { getApiBaseUrl, nutritionApi } from "../services/api";
 import { DailyNutritionSummary } from "../types/nutrition";
 import NutritionSummary from "../components/NutritionSummary";
 import MealSection from "../components/MealSection";
 import AddFoodForm from "../components/AddFoodForm";
 import AddExerciseForm from "../components/AddExerciseForm";
 import ExerciseSection from "../components/ExerciseSection";
+import {
+  addDays,
+  formatPstLongDate,
+  getPstDateString,
+  getTodayPst,
+  getWeekDates,
+} from "../utils/date";
 import "../styles/global.css";
-
-// Get API base URL (same logic as api.ts)
-const getApiBaseUrl = () => {
-  if (typeof window === 'undefined') return 'http://localhost:8000';
-
-  const hostname = window.location.hostname;
-
-  if (hostname.includes('.app.github.dev')) {
-    const backendHostname = hostname.replace(/-\d+\.app\.github\.dev/, '-8000.app.github.dev');
-    return `https://${backendHostname}`;
-  }
-
-  return 'http://localhost:8000';
-};
-
-const PST_TIMEZONE = "America/Los_Angeles";
-const PST_DATE_FORMATTER = new Intl.DateTimeFormat("en-CA", {
-  timeZone: PST_TIMEZONE,
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-});
-const PST_WEEKDAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  timeZone: PST_TIMEZONE,
-  weekday: "short",
-});
-const PST_LONG_DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  timeZone: PST_TIMEZONE,
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
-const PST_DAY_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  timeZone: PST_TIMEZONE,
-  day: "numeric",
-});
-
-const getPstDateString = (date: Date) => PST_DATE_FORMATTER.format(date);
-
-const dateFromPstString = (dateStr: string) => {
-  const [year, month, day] = dateStr.split("-").map(Number);
-  return new Date(Date.UTC(year, month - 1, day, 12));
-};
-
-const addDays = (dateStr: string, offset: number) => {
-  const base = dateFromPstString(dateStr);
-  return getPstDateString(new Date(base.getTime() + offset * 86400000));
-};
-
-const getWeekDates = (dateStr: string) => {
-  const anchor = dateFromPstString(dateStr);
-  const dayIndex = anchor.getUTCDay();
-  const start = new Date(anchor.getTime() - dayIndex * 86400000);
-  return Array.from({ length: 7 }, (_, index) => {
-    const current = new Date(start.getTime() + index * 86400000);
-    return {
-      dateStr: getPstDateString(current),
-      weekday: PST_WEEKDAY_FORMATTER.format(current),
-      dayNumber: PST_DAY_FORMATTER.format(current),
-    };
-  });
-};
 
 const DashboardPage: React.FC = () => {
   const { user, token, logout } = useAuth();
@@ -79,10 +24,11 @@ const DashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState(() => getPstDateString(new Date()));
-  const todayPst = getPstDateString(new Date());
+  const todayPst = getTodayPst();
   const isToday = selectedDate === todayPst;
   const weekDates = useMemo(() => getWeekDates(selectedDate), [selectedDate]);
 
+  // Load daily nutrition summary for the selected date.
   const fetchNutrition = async (dateStr?: string) => {
     if (!token) {
       setError("Not authenticated");
@@ -176,9 +122,7 @@ const DashboardPage: React.FC = () => {
           <div className="date-strip">
             <div className="date-strip-header">
               <div className="date-title">
-                {isToday
-                  ? "Today"
-                  : PST_LONG_DATE_FORMATTER.format(dateFromPstString(selectedDate))}
+                {isToday ? "Today" : formatPstLongDate(selectedDate)}
               </div>
               <div className="date-controls">
                 <button
