@@ -13,6 +13,16 @@ A health tracking app that helps users track daily calorie intake and consumptio
 - **Database**: SQLite (auto-creates tables on startup)
 - **Auth**: JWT tokens + bcrypt password hashing
 - **Testing**: pytest (backend) + vitest (frontend)
+- **Package Manager**: uv (Python) + npm (JavaScript)
+
+## Prerequisites
+- **Python**: 3.11 or higher
+- **Node.js**: 18 or higher
+- **uv**: Fast Python package manager ([installation guide](https://github.com/astral-sh/uv))
+  ```bash
+  # Install uv (Linux/macOS)
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  ```
 
 ## Environment Setup
 - Create [backend/.env](backend/.env) with `USDA_API_KEY=<your_api_key>` to enable USDA FoodData Central search and imports.
@@ -43,8 +53,8 @@ Press `Ctrl+C` to stop all servers.
 **Terminal 1 - Backend:**
 ```bash
 cd /workspaces/health-tracking-app/backend
-pip install -r requirements.txt -r requirements-dev.txt  # First time only
-uvicorn app.main:app --reload
+uv sync  # First time only - installs dependencies
+uv run uvicorn app.main:app --reload
 ```
 
 **Terminal 2 - Frontend:**
@@ -55,6 +65,45 @@ npm run dev
 ```
 
 Then open your browser to **http://localhost:5173**
+
+## Development Commands
+
+### Backend (Python with uv)
+```bash
+cd backend
+
+# Install/sync dependencies
+uv sync
+
+# Run development server
+uv run uvicorn app.main:app --reload
+
+# Run tests with coverage
+uv run pytest tests/ -v
+
+# Add a new dependency
+uv add package-name
+
+# Add a dev dependency
+uv add --dev package-name
+```
+
+### Frontend (Node.js with npm)
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+
+# Run tests
+npm test
+
+# Build for production
+npm run build
+```
 
 ## Features
 
