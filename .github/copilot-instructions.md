@@ -8,6 +8,7 @@ A health tracking application for monitoring daily calorie intake and consumptio
 - **Frontend**: React + Vite + TypeScript
 - **Auth**: JWT tokens + bcrypt password hashing
 - **Testing**: pytest (backend 90%+ coverage), vitest (frontend)
+- **Package Manager**: uv (Python), npm (JavaScript)
 
 ## Architecture & Key Patterns
 
@@ -29,9 +30,9 @@ A health tracking application for monitoring daily calorie intake and consumptio
 ### Backend
 ```bash
 cd backend
-pip install -r requirements.txt -r requirements-dev.txt
-uvicorn app.main:app --reload  # Dev server on :8000
-pytest tests/ -v  # Run tests with coverage
+uv sync  # Install dependencies and create .venv
+uv run uvicorn app.main:app --reload  # Dev server on :8000
+uv run pytest tests/ -v  # Run tests with coverage
 ```
 
 ### Frontend
@@ -90,8 +91,12 @@ npm test  # Run tests
 
 ### Running the full stack
 ```bash
+# Option 1: One command (recommended)
+./start-dev.sh
+
+# Option 2: Two terminals
 # Terminal 1: Backend
-cd backend && uvicorn app.main:app --reload
+cd backend && uv run uvicorn app.main:app --reload
 
 # Terminal 2: Frontend
 cd frontend && npm run dev

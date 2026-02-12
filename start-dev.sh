@@ -4,6 +4,12 @@ set -e
 
 echo "🚀 Starting Health Tracking App Development Environment..."
 
+# Resolve repo root so later cd calls are stable.
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# Add uv to PATH
+export PATH="$HOME/.local/bin:$PATH"
+
 # Kill any existing processes
 echo "🧹 Cleaning up old processes..."
 pkill -f "uvicorn app.main:app" 2>/dev/null || true
@@ -12,8 +18,8 @@ sleep 2
 
 # Start backend
 echo "📡 Starting backend server..."
-cd "$(dirname "$0")/backend"
-uvicorn app.main:app --reload --host 0.0.0.0 &
+cd "$ROOT_DIR/backend"
+uv run uvicorn app.main:app --reload --host 0.0.0.0 &
 BACKEND_PID=$!
 echo "✅ Backend started (PID: $BACKEND_PID)"
 
@@ -31,7 +37,7 @@ echo "✅ Backend health check passed"
 
 # Start frontend
 echo "🎨 Starting frontend development server..."
-cd "$(dirname "$0")/frontend"
+cd "$ROOT_DIR/frontend"
 npm run dev &
 FRONTEND_PID=$!
 echo "✅ Frontend started (PID: $FRONTEND_PID)"

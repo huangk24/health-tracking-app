@@ -12,6 +12,7 @@
 - **Database**: SQLite (auto-creates tables on startup)
 - **Auth**: JWT tokens + bcrypt password hashing
 - **Nutrition Data**: USDA FoodData Central API
+- **Package Management**: uv (Python), npm (JavaScript)
 
 ## Architecture & Data Flow
 1. **User Profile** → stored via SQLAlchemy; drives BMR/TDEE calculations when profile is complete.
@@ -48,6 +49,35 @@
 - **Backend**: pytest + pytest-cov with coverage gate in [backend/pyproject.toml](backend/pyproject.toml)
 - **Frontend**: Vitest
 - **Coverage target**: keep >= 80% for backend and >= 80% for frontend
+
+## Dependency Management with uv
+This project uses [uv](https://github.com/astral-sh/uv) for Python package management, offering:
+- **Fast dependency resolution**: 10-100x faster than pip
+- **Reproducible builds**: uv.lock ensures consistent installs
+- **Virtual environment management**: automatic .venv creation
+- **pyproject.toml-first**: dependencies declared in [backend/pyproject.toml](backend/pyproject.toml)
+
+### Key Commands
+```bash
+# Install/sync all dependencies (creates .venv automatically)
+uv sync
+
+# Run commands in the virtual environment
+uv run uvicorn app.main:app --reload
+uv run pytest tests/ -v
+
+# Add new dependencies
+uv add fastapi  # production dependency
+uv add --dev pytest  # development dependency
+
+# Update all dependencies
+uv sync --upgrade
+```
+
+### Project Structure
+- **pyproject.toml**: declares all dependencies (production + dev)
+- **uv.lock**: lockfile with pinned versions (commit this!)
+- **.venv/**: virtual environment (auto-created, gitignored)
 
 ## CI/CD + Code Review Automation
 - **CI**: Backend + frontend checks in [.github/workflows/ci.yml](.github/workflows/ci.yml)
