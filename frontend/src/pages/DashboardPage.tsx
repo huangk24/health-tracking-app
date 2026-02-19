@@ -8,6 +8,7 @@ import MealSection from "../components/MealSection";
 import AddFoodForm from "../components/AddFoodForm";
 import AddExerciseForm from "../components/AddExerciseForm";
 import ExerciseSection from "../components/ExerciseSection";
+import DailyWeightLogger from "../components/DailyWeightLogger";
 import {
   addDays,
   formatPstLongDate,
@@ -193,6 +194,11 @@ const DashboardPage: React.FC = () => {
                   token={token!}
                   date={selectedDate}
                   onExerciseAdded={handleFoodAdded}
+                />
+                <DailyWeightLogger 
+                  token={token!} 
+                  date={selectedDate}
+                  onWeightLogged={handleFoodAdded}
                 />
               </div>
             </div>

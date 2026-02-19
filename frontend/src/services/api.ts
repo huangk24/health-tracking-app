@@ -280,3 +280,57 @@ export const profileApi = {
     return response.json();
   },
 };
+
+export interface WeightEntry {
+  id: number;
+  user_id: number;
+  date: string;
+  weight: number;
+}
+
+export interface WeightTrendData {
+  date: string;
+  weight: number;
+  change?: number;
+}
+
+export const weightApi = {
+  createWeightEntry: async (data: { date: string; weight: number }, token?: string): Promise<WeightEntry> => {
+    return api.post("/weights", data, token);
+  },
+
+  getWeightHistory: async (params: { days?: number; start_date?: string; end_date?: string; aggregation?: string }, token?: string): Promise<WeightTrendData[]> => {
+    const queryParams = new URLSearchParams();
+    if (params.days) queryParams.append("days", params.days.toString());
+    if (params.start_date) queryParams.append("start_date", params.start_date);
+    if (params.end_date) queryParams.append("end_date", params.end_date);
+    if (params.aggregation) queryParams.append("aggregation", params.aggregation);
+    const url = `/weights/history?${queryParams.toString()}`;
+    return api.get(url, token);
+  },
+
+  getLatestWeight: async (token?: string): Promise<WeightEntry | null> => {
+    return api.get("/weights/latest", token);
+  },
+
+  deleteWeightEntry: async (weightId: number, token?: string): Promise<void> => {
+    const headers: HeadersInit = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await fetch(`${API_BASE_URL}/weights/${weightId}`, {
+      method: "DELETE",
+      headers,
+    });
+    if (!response.ok) {
+      let detail = response.statusText || "Request failed";
+      try {
+        const error = await response.json();
+        detail = error.detail || JSON.stringify(error);
+      } catch (err) {
+        // Ignore parsing errors to preserve default detail.
+      }
+      throw new Error(detail);
+    }
+  },
+};
