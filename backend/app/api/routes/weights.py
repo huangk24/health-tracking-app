@@ -70,6 +70,7 @@ def get_weight_history(
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
     aggregation: Optional[str] = None,
+    limit: Optional[int] = None,
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
@@ -78,6 +79,7 @@ def get_weight_history(
     - days: Get last N days (default: 90)
     - start_date & end_date: Custom date range
     - aggregation: "week", "month", "quarter", or "year" for aggregated data
+    - limit: Get last N date entries (only latest entry per date)
     """
 
     # Handle aggregated views
@@ -207,6 +209,42 @@ def get_weight_history(
                 date=year_date,
                 weight=round(entry.avg_weight, 1),
                 change=None
+            ))
+
+        return result
+
+    # Handle limit: get last N date entries (latest entry per date)
+    if limit:
+        # Subquery to get the latest entry for each date
+        subquery = db.query(
+            WeightEntry.date,
+            func.max(WeightEntry.id).label('max_id')
+        ).filter(
+            WeightEntry.user_id == user.id
+        ).group_by(
+            WeightEntry.date
+        ).subquery()
+
+        # Get the actual entries
+        entries = db.query(WeightEntry).join(
+            subquery,
+            (WeightEntry.date == subquery.c.date) & (WeightEntry.id == subquery.c.max_id)
+        ).order_by(desc(WeightEntry.date)).limit(limit).all()
+
+        # Reverse to show oldest to newest
+        entries = list(reversed(entries))
+
+        # Calculate weight change from previous entry
+        result = []
+        for i, entry in enumerate(entries):
+            change = None
+            if i > 0:
+                change = round(entry.weight - entries[i-1].weight, 2)
+
+            result.append(WeightTrendData(
+                date=entry.date,
+                weight=entry.weight,
+                change=change
             ))
 
         return result

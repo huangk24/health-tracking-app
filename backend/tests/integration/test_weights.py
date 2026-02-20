@@ -289,3 +289,90 @@ def test_profile_weight_updates_with_weight_entry(client, auth_headers, test_use
     profile_data = profile_response.json()
     # Check that user's weight was updated (should be 80 as integer)
     assert profile_data["weight"] == 80
+
+
+def test_get_weight_history_with_limit(client, auth_headers, test_user):
+    """Test getting last N date entries with limit parameter"""
+    today = date.today()
+
+    # Create 10 entries on different dates
+    for i in range(10):
+        weight_data = {
+            "date": str(today - timedelta(days=i)),
+            "weight": 70.0 + i
+        }
+        client.post("/weights", json=weight_data, headers=auth_headers)
+
+    # Request only last 5 entries
+    response = client.get("/weights/history?limit=5", headers=auth_headers)
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+    assert len(data) == 5
+    # Should be in ascending date order (oldest to newest)
+    dates = [entry["date"] for entry in data]
+    assert dates == sorted(dates)
+    # Should be the 5 most recent dates
+    assert data[-1]["date"] == str(today)
+    assert data[0]["date"] == str(today - timedelta(days=4))
+
+
+def test_get_weight_history_limit_with_multiple_entries_per_date(client, auth_headers, test_user):
+    """Test that limit returns only latest entry per date when multiple exist"""
+    today = date.today()
+
+    # Create multiple entries on the same date (simulating multiple measurements)
+    for i in range(3):
+        weight_data = {
+            "date": str(today),
+            "weight": 70.0 + i  # Different weights
+        }
+        response = client.post("/weights", json=weight_data, headers=auth_headers)
+        assert response.status_code == status.HTTP_201_CREATED
+
+    # Create entries on different dates
+    for i in range(1, 4):
+        weight_data = {
+            "date": str(today - timedelta(days=i)),
+            "weight": 75.0 + i
+        }
+        client.post("/weights", json=weight_data, headers=auth_headers)
+
+    # Request last 4 date entries
+    response = client.get("/weights/history?limit=4", headers=auth_headers)
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+    # Should have 4 distinct dates
+    assert len(data) == 4
+    # Today's entry should be the latest one (72.0, which was the last created)
+    today_entries = [e for e in data if e["date"] == str(today)]
+    assert len(today_entries) == 1
+    assert today_entries[0]["weight"] == 72.0
+
+
+def test_get_weight_history_limit_returns_in_ascending_order(client, auth_headers, test_user):
+    """Test that limit parameter returns entries in ascending date order"""
+    today = date.today()
+
+    # Create entries in random order
+    dates = [today - timedelta(days=i) for i in [5, 2, 8, 1, 10]]
+    for entry_date in dates:
+        weight_data = {
+            "date": str(entry_date),
+            "weight": 70.0
+        }
+        client.post("/weights", json=weight_data, headers=auth_headers)
+
+    # Request last 3 date entries
+    response = client.get("/weights/history?limit=3", headers=auth_headers)
+    assert response.status_code == status.HTTP_200_OK
+
+    data = response.json()
+    assert len(data) == 3
+    # Should be in ascending order (oldest to newest)
+    dates_returned = [entry["date"] for entry in data]
+    assert dates_returned == sorted(dates_returned)
+    # Should be the 3 most recent dates
+    expected_dates = sorted([str(d) for d in [today - timedelta(days=1), today - timedelta(days=2), today - timedelta(days=5)]])
+    assert dates_returned == expected_dates

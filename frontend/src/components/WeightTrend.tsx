@@ -21,8 +21,8 @@ const WeightTrend: React.FC<WeightTrendProps> = ({ token }) => {
         let history: WeightTrendData[];
 
         if (timeRange === "date") {
-          // Get daily data for the last 7 days
-          history = await weightApi.getWeightHistory({ days: 7 }, token);
+          // Get last 7 date entries (not last 7 days)
+          history = await weightApi.getWeightHistory({ limit: 7 }, token);
         } else if (timeRange === "weeks") {
           // Get weekly aggregated data for last 8 weeks
           history = await weightApi.getWeightHistory({ aggregation: "week" }, token);
