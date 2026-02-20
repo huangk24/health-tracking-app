@@ -112,6 +112,8 @@ npm run build
 - **Profile Management** - View and manage user profile with BMR/TDEE calculations
 - **Nutrition Dashboard** - Calories ring, macro donut, and daily targets at a glance
 - **Weight Tracking** - Log daily weight with interactive historical trend chart
+- **Weekly Weight Comparison** - Analyze weight changes week-over-week with trend indicators and goal progress
+- **Weight Entry Management** - Add and delete weight entries directly from the profile page
 - **Meal Tracking** - Log meals with USDA FoodData Central integration (breakfast, lunch, dinner, snacks)
 - **Meal Details & Editing** - Expand meals for nutrient totals and edit or delete entries
 - **Exercise Logging** - Track exercises and calories burned
