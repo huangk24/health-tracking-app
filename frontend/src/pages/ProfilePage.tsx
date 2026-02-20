@@ -3,6 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { profileApi } from "../services/api";
 import WeightTrend from "../components/WeightTrend";
+import WeeklyComparison from "../components/WeeklyComparison";
 import "../styles/profile.css";
 
 interface UserProfile {
@@ -269,6 +270,8 @@ const ProfilePage: React.FC = () => {
           </form>
         )}
       </div>
+
+      <WeeklyComparison token={token!} />
 
       <WeightTrend token={token!} />
     </div>

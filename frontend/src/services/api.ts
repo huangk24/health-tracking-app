@@ -279,6 +279,10 @@ export const profileApi = {
     }
     return response.json();
   },
+
+  getWeeklyComparison: async (token?: string) => {
+    return api.get("/profile/weekly-comparison", token);
+  },
 };
 
 export interface WeightEntry {
@@ -299,12 +303,13 @@ export const weightApi = {
     return api.post("/weights", data, token);
   },
 
-  getWeightHistory: async (params: { days?: number; start_date?: string; end_date?: string; aggregation?: string }, token?: string): Promise<WeightTrendData[]> => {
+  getWeightHistory: async (params: { days?: number; start_date?: string; end_date?: string; aggregation?: string; limit?: number }, token?: string): Promise<WeightTrendData[]> => {
     const queryParams = new URLSearchParams();
     if (params.days) queryParams.append("days", params.days.toString());
     if (params.start_date) queryParams.append("start_date", params.start_date);
     if (params.end_date) queryParams.append("end_date", params.end_date);
     if (params.aggregation) queryParams.append("aggregation", params.aggregation);
+    if (params.limit) queryParams.append("limit", params.limit.toString());
     const url = `/weights/history?${queryParams.toString()}`;
     return api.get(url, token);
   },

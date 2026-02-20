@@ -19,7 +19,9 @@
 2. **Food Logging** → frontend submits quantity + unit → backend normalizes nutrition → daily intake totals stored.
 3. **Exercise Logging** → calories burned are applied to daily remaining calories.
 4. **Weight Tracking** → daily weight entries with date → historical trends visualized in interactive charts.
-5. **Daily Summary** → backend aggregates meals + exercises for a PST day → frontend renders summary cards.
+5. **Weekly Weight Comparison** → backend analyzes weight changes over time → calculates week-over-week differences, trends, and goal progress → frontend displays visual indicators and statistics.
+6. **Weight Entry Management** → users can add/delete weight entries from profile page → backend validates and manages weight history.
+7. **Daily Summary** → backend aggregates meals + exercises for a PST day → frontend renders summary cards.
 
 ## Project Structure (Single-Responsibility Files)
 - Backend root: [backend/app](backend/app)
@@ -38,7 +40,7 @@
 - `User`: auth + profile fields (sex, age, height, weight, activity level, goal)
 - `FoodEntry`: meal type, food name, portion, nutrition data, date, user association
 - `ExerciseEntry`: name, calories burned, date, user association
-- `WeightEntry`: weight (kg), date, user association for daily weight tracking
+- `WeightEntry`: weight (kg), date, user association for daily weight tracking with weekly comparisons
 
 ## Nutrition & Recommendation Logic
 - **BMR**: Mifflin–St Jeor
