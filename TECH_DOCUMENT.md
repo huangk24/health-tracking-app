@@ -18,7 +18,8 @@
 1. **User Profile** → stored via SQLAlchemy; drives BMR/TDEE calculations when profile is complete.
 2. **Food Logging** → frontend submits quantity + unit → backend normalizes nutrition → daily intake totals stored.
 3. **Exercise Logging** → calories burned are applied to daily remaining calories.
-4. **Daily Summary** → backend aggregates meals + exercises for a PST day → frontend renders summary cards.
+4. **Weight Tracking** → daily weight entries with date → historical trends visualized in interactive charts.
+5. **Daily Summary** → backend aggregates meals + exercises for a PST day → frontend renders summary cards.
 
 ## Project Structure (Single-Responsibility Files)
 - Backend root: [backend/app](backend/app)
@@ -34,10 +35,10 @@
 	- [frontend/src/components](frontend/src/components): shared UI components
 
 ## Core Domain Model (Backend)
-- `User`: auth + profile fields
-- `FoodItem`: name, serving size, nutrition facts
-- `CalorieEntry`: meal type, quantity, date, totals
-- `ExerciseEntry`: name, calories burned, date
+- `User`: auth + profile fields (sex, age, height, weight, activity level, goal)
+- `FoodEntry`: meal type, food name, portion, nutrition data, date, user association
+- `ExerciseEntry`: name, calories burned, date, user association
+- `WeightEntry`: weight (kg), date, user association for daily weight tracking
 
 ## Nutrition & Recommendation Logic
 - **BMR**: Mifflin–St Jeor

@@ -3,6 +3,7 @@ A health tracking app that helps users track daily calorie intake and consumptio
 
 ## What It Does
 - **Daily dashboard** showing calories, macros, and remaining targets.
+- **Weight tracking** with daily logging and historical trend visualization.
 - **Meals and exercise logged by day** with a PST-based date selector.
 - **USDA FoodData Central search** for quick food logging.
 - **Edit and delete entries** for any day, including past days.
@@ -108,10 +109,12 @@ npm run build
 ## Features
 
 - **User Authentication** - Register and login with JWT tokens
+- **Profile Management** - View and manage user profile with BMR/TDEE calculations
 - **Nutrition Dashboard** - Calories ring, macro donut, and daily targets at a glance
-- **Meal Tracking** - Log meals with USDA FoodData Central integration
+- **Weight Tracking** - Log daily weight with interactive historical trend chart
+- **Meal Tracking** - Log meals with USDA FoodData Central integration (breakfast, lunch, dinner, snacks)
 - **Meal Details & Editing** - Expand meals for nutrient totals and edit or delete entries
 - **Exercise Logging** - Track exercises and calories burned
-- **Daily Summary** - View calorie intake vs. daily goals
+- **Daily Summary** - View calorie intake vs. daily goals with real-time nutrition tracking
 - **PST Date Selector** - Browse and edit historical days, defaulting to current day in PST
 - **Responsive Design** - Works on desktop and mobile devices

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { profileApi } from "../services/api";
+import WeightTrend from "../components/WeightTrend";
 import "../styles/profile.css";
 
 interface UserProfile {
@@ -268,6 +269,8 @@ const ProfilePage: React.FC = () => {
           </form>
         )}
       </div>
+
+      <WeightTrend token={token!} />
     </div>
   );
 };
