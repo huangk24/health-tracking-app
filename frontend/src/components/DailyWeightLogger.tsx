@@ -43,7 +43,7 @@ const DailyWeightLogger: React.FC<DailyWeightLoggerProps> = ({ token, date, onWe
       await weightApi.createWeightEntry({ date, weight: weightValue }, token);
       setSuccessMessage("Weight logged successfully!");
       setWeight("");
-      
+
       setTimeout(() => {
         setSuccessMessage(null);
         setIsOpen(false);

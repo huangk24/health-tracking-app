@@ -195,8 +195,8 @@ const DashboardPage: React.FC = () => {
                   date={selectedDate}
                   onExerciseAdded={handleFoodAdded}
                 />
-                <DailyWeightLogger 
-                  token={token!} 
+                <DailyWeightLogger
+                  token={token!}
                   date={selectedDate}
                   onWeightLogged={handleFoodAdded}
                 />

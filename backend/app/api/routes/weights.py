@@ -32,7 +32,7 @@ def create_weight_entry(
         existing.weight = weight_data.weight
         db.commit()
         db.refresh(existing)
-        
+
         # Update user's profile weight with most recent entry
         latest_entry = db.query(WeightEntry).filter(
             WeightEntry.user_id == user.id
@@ -40,7 +40,7 @@ def create_weight_entry(
         if latest_entry:
             user.weight = int(latest_entry.weight)
             db.commit()
-        
+
         return existing
 
     # Create new entry
@@ -79,20 +79,20 @@ def get_weight_history(
     - start_date & end_date: Custom date range
     - aggregation: "week", "month", "quarter", or "year" for aggregated data
     """
-    
+
     # Handle aggregated views
     if aggregation == "week":
         # Weekly averages for the last 8 weeks
         today = date.today()
         start_of_week = today - timedelta(days=today.weekday())  # Monday of current week
-        
+
         # Get all entries for the last 56 days (8 weeks)
         cutoff_date = start_of_week - timedelta(days=56)
         entries = db.query(WeightEntry).filter(
             WeightEntry.user_id == user.id,
             WeightEntry.date >= cutoff_date
         ).order_by(WeightEntry.date).all()
-        
+
         # Group by week
         weekly_data = defaultdict(list)
         for entry in entries:
@@ -100,7 +100,7 @@ def get_weight_history(
             days_from_start = (entry.date - cutoff_date).days
             week_num = days_from_start // 7
             weekly_data[week_num].append(entry.weight)
-        
+
         # Calculate averages and create results
         result = []
         for week_num in sorted(weekly_data.keys()):
@@ -115,13 +115,13 @@ def get_weight_history(
                 weight=round(avg_weight, 1),
                 change=None
             ))
-        
+
         return result
-    
+
     elif aggregation == "month":
         # Monthly averages for current year only (Jan-Dec)
         current_year = date.today().year
-        
+
         # Get all entries for current year
         entries = db.query(
             extract('month', WeightEntry.date).label('month'),
@@ -134,11 +134,11 @@ def get_weight_history(
         ).order_by(
             extract('month', WeightEntry.date)
         ).all()
-        
+
         # Create result for all 12 months
         result = []
         month_data = {int(e.month): e.avg_weight for e in entries}
-        
+
         for month in range(1, 13):
             if month in month_data:
                 # Create a date for the first day of the month
@@ -148,20 +148,20 @@ def get_weight_history(
                     weight=round(month_data[month], 1),
                     change=None
                 ))
-        
+
         return result
-    
+
     elif aggregation == "quarter":
         # Quarterly averages for previous year, current year, and next year
         current_year = date.today().year
         years = [current_year - 1, current_year, current_year + 1]
-        
+
         # Get all entries for the specified years
         entries = db.query(WeightEntry).filter(
             WeightEntry.user_id == user.id,
             extract('year', WeightEntry.date).in_(years)
         ).all()
-        
+
         # Group by year and quarter manually
         quarterly_data = defaultdict(list)
         for entry in entries:
@@ -169,7 +169,7 @@ def get_weight_history(
             quarter = (entry.date.month - 1) // 3 + 1
             key = (year, quarter)
             quarterly_data[key].append(entry.weight)
-        
+
         # Calculate averages and create results
         result = []
         for (year, quarter) in sorted(quarterly_data.keys()):
@@ -183,9 +183,9 @@ def get_weight_history(
                 weight=round(avg_weight, 1),
                 change=None
             ))
-        
+
         return result
-    
+
     elif aggregation == "year":
         # Yearly averages for all available years
         entries = db.query(
@@ -198,7 +198,7 @@ def get_weight_history(
         ).order_by(
             extract('year', WeightEntry.date)
         ).all()
-        
+
         result = []
         for entry in entries:
             # Create a date for January 1st of the year
@@ -208,9 +208,9 @@ def get_weight_history(
                 weight=round(entry.avg_weight, 1),
                 change=None
             ))
-        
+
         return result
-    
+
     # Default: daily data points
     query = db.query(WeightEntry).filter(WeightEntry.user_id == user.id)
 
@@ -235,7 +235,7 @@ def get_weight_history(
         change = None
         if i > 0:
             change = round(entry.weight - entries[i-1].weight, 2)
-        
+
         result.append(WeightTrendData(
             date=entry.date,
             weight=entry.weight,

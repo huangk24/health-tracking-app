@@ -19,7 +19,7 @@ const WeightTrend: React.FC<WeightTrendProps> = ({ token }) => {
       try {
         setLoading(true);
         let history: WeightTrendData[];
-        
+
         if (timeRange === "date") {
           // Get daily data for the last 7 days
           history = await weightApi.getWeightHistory({ days: 7 }, token);
@@ -33,7 +33,7 @@ const WeightTrend: React.FC<WeightTrendProps> = ({ token }) => {
           // Get quarterly aggregated data for prev/current/next year
           history = await weightApi.getWeightHistory({ aggregation: "quarter" }, token);
         }
-        
+
         setData(history);
         setError(null);
       } catch (err: any) {
@@ -50,7 +50,7 @@ const WeightTrend: React.FC<WeightTrendProps> = ({ token }) => {
     // Parse date carefully to avoid timezone issues
     const [year, month, day] = dateStr.split('T')[0].split('-').map(Number);
     const date = new Date(year, month - 1, day); // month is 0-indexed
-    
+
     if (timeRange === "date") {
       return date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
     } else if (timeRange === "weeks") {
@@ -58,12 +58,12 @@ const WeightTrend: React.FC<WeightTrendProps> = ({ token }) => {
       const startDate = new Date(date);
       const endDate = new Date(date);
       endDate.setDate(endDate.getDate() + 6); // Add 6 days to get end of week (Mon-Sun)
-      
+
       const startMonth = startDate.toLocaleDateString("en-US", { month: "short" });
       const startDay = startDate.getDate();
       const endMonth = endDate.toLocaleDateString("en-US", { month: "short" });
       const endDay = endDate.getDate();
-      
+
       // If both dates are in the same month, show "Feb 1 - 8"
       if (startMonth === endMonth) {
         return `${startMonth} ${startDay} - ${endDay}`;
