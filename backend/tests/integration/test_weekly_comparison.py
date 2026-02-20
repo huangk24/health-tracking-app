@@ -52,11 +52,11 @@ def test_weekly_comparison_no_data(client: TestClient):
     """Test weekly comparison with no data"""
     token = register_and_login(client)
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     response = client.get("/profile/weekly-comparison", headers=headers)
     assert response.status_code == 200
     data = response.json()
-    
+
     assert "current_week" in data
     assert "last_week" in data
     assert data["current_week"]["calories"] == 0.0
@@ -70,11 +70,11 @@ def test_weekly_comparison_with_data(client: TestClient):
     """Test weekly comparison with nutrition and exercise data"""
     token = register_and_login(client)
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     # Get the user and create a db session
     db = next(override_get_db())
     user = db.query(User).filter(User.username == "weekly_user").first()
-    
+
     # Create a food item
     food_item = FoodItem(
         name="Test Food",
@@ -88,15 +88,15 @@ def test_weekly_comparison_with_data(client: TestClient):
     db.add(food_item)
     db.commit()
     db.refresh(food_item)
-    
+
     today = date.today()
     # Calculate current week start (Monday)
     current_week_start = today - timedelta(days=today.weekday())
-    
+
     # Add entries for current week
     for i in range(7):
         entry_date = current_week_start + timedelta(days=i)
-        
+
         # Add food entry (1 serving = 100g = 200 cal)
         calorie_entry = CalorieEntry(
             user_id=user.id,
@@ -107,7 +107,7 @@ def test_weekly_comparison_with_data(client: TestClient):
             date=entry_date
         )
         db.add(calorie_entry)
-        
+
         # Add exercise entry
         exercise = ExerciseEntry(
             user_id=user.id,
@@ -116,12 +116,12 @@ def test_weekly_comparison_with_data(client: TestClient):
             date=entry_date
         )
         db.add(exercise)
-    
+
     # Add entries for last week
     last_week_start = current_week_start - timedelta(days=7)
     for i in range(7):
         entry_date = last_week_start + timedelta(days=i)
-        
+
         # Add food entry with 1.5 servings (1.5 * 200 = 300 cal)
         calorie_entry = CalorieEntry(
             user_id=user.id,
@@ -132,7 +132,7 @@ def test_weekly_comparison_with_data(client: TestClient):
             date=entry_date
         )
         db.add(calorie_entry)
-        
+
         # Add exercise entry
         exercise = ExerciseEntry(
             user_id=user.id,
@@ -141,29 +141,29 @@ def test_weekly_comparison_with_data(client: TestClient):
             date=entry_date
         )
         db.add(exercise)
-    
+
     db.commit()
     db.close()
-    
+
     # Get weekly comparison
     response = client.get("/profile/weekly-comparison", headers=headers)
     assert response.status_code == 200
     data = response.json()
-    
+
     # Check current week (1 serving = 200 cal)
     assert data["current_week"]["calories"] == 200.0
     assert data["current_week"]["carbs"] == 30.0
     assert data["current_week"]["protein"] == 20.0
     assert data["current_week"]["fats"] == 10.0
     assert data["current_week"]["exercise"] == 300.0
-    
+
     # Check last week (1.5 servings = 300 cal)
     assert data["last_week"]["calories"] == 300.0
     assert data["last_week"]["carbs"] == 45.0
     assert data["last_week"]["protein"] == 30.0
     assert data["last_week"]["fats"] == 15.0
     assert data["last_week"]["exercise"] == 250.0
-    
+
     # Check date ranges
     assert "current_week_start" in data
     assert "current_week_end" in data
@@ -181,11 +181,11 @@ def test_weekly_comparison_partial_week_data(client: TestClient):
     """Test weekly comparison with data only on some days (not all 7)"""
     token = register_and_login(client)
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     # Get the user and create a db session
     db = next(override_get_db())
     user = db.query(User).filter(User.username == "weekly_user").first()
-    
+
     # Create a food item
     food_item = FoodItem(
         name="Partial Week Food",
@@ -199,15 +199,15 @@ def test_weekly_comparison_partial_week_data(client: TestClient):
     db.add(food_item)
     db.commit()
     db.refresh(food_item)
-    
+
     today = date.today()
     # Calculate current week start (Monday)
     current_week_start = today - timedelta(days=today.weekday())
-    
+
     # Add entries for only 3 days of the current week (Monday, Wednesday, Friday)
     for day_offset in [0, 2, 4]:
         entry_date = current_week_start + timedelta(days=day_offset)
-        
+
         # Add food entry (1 serving = 300 cal)
         calorie_entry = CalorieEntry(
             user_id=user.id,
@@ -218,7 +218,7 @@ def test_weekly_comparison_partial_week_data(client: TestClient):
             date=entry_date
         )
         db.add(calorie_entry)
-        
+
         # Add exercise entry
         exercise = ExerciseEntry(
             user_id=user.id,
@@ -227,15 +227,15 @@ def test_weekly_comparison_partial_week_data(client: TestClient):
             date=entry_date
         )
         db.add(exercise)
-    
+
     db.commit()
     db.close()
-    
+
     # Get weekly comparison
     response = client.get("/profile/weekly-comparison", headers=headers)
     assert response.status_code == 200
     data = response.json()
-    
+
     # Should average over 3 days (not 7)
     # Total: 3 days * 300 cal = 900 cal / 3 days = 300 cal/day
     assert data["current_week"]["calories"] == 300.0

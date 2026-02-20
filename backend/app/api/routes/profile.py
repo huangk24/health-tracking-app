@@ -155,25 +155,25 @@ def get_weekly_comparison(
 ):
     """Get weekly comparison of nutrition and exercise data"""
     today = pst_today()
-    
+
     # Calculate current week (Monday to Sunday)
     current_week_start = today - timedelta(days=today.weekday())  # Monday
     current_week_end = current_week_start + timedelta(days=6)  # Sunday
-    
+
     # Calculate last week (Monday to Sunday)
     last_week_start = current_week_start - timedelta(days=7)
     last_week_end = last_week_start + timedelta(days=6)
-    
+
     # Get data for current week
     current_week_data = _calculate_week_averages(
         user.id, current_week_start, current_week_end, db
     )
-    
+
     # Get data for last week
     last_week_data = _calculate_week_averages(
         user.id, last_week_start, last_week_end, db
     )
-    
+
     return WeeklyComparisonResponse(
         current_week=current_week_data,
         last_week=last_week_data,
@@ -197,23 +197,23 @@ def _calculate_week_averages(
         CalorieEntry.date >= start_date,
         CalorieEntry.date <= end_date
     ).all()
-    
+
     # Get all exercise entries for the week
     exercises = db.query(ExerciseEntry).filter(
         ExerciseEntry.user_id == user_id,
         ExerciseEntry.date >= start_date,
         ExerciseEntry.date <= end_date
     ).all()
-    
+
     # Track unique dates with nutrition data
     nutrition_dates = set()
-    
+
     # Calculate totals
     total_calories = 0
     total_carbs = 0
     total_protein = 0
     total_fats = 0
-    
+
     for entry in entries:
         nutrition_dates.add(entry.date)
         entry_totals = entry.get_totals()
@@ -221,19 +221,19 @@ def _calculate_week_averages(
         total_carbs += entry_totals["carbs_g"]
         total_protein += entry_totals["protein_g"]
         total_fats += entry_totals["fat_g"]
-    
+
     # Track unique dates with exercise data
     exercise_dates = set()
     total_exercise = 0
     for ex in exercises:
         exercise_dates.add(ex.date)
         total_exercise += ex.calories_burned
-    
+
     # Count days with nutrition data (0 if no data)
     num_nutrition_days = len(nutrition_dates) if nutrition_dates else 1
     # Count days with exercise data (0 if no data)
     num_exercise_days = len(exercise_dates) if exercise_dates else 1
-    
+
     return WeeklyAverages(
         calories=round(total_calories / num_nutrition_days, 1),
         carbs=round(total_carbs / num_nutrition_days, 1),
@@ -241,4 +241,3 @@ def _calculate_week_averages(
         fats=round(total_fats / num_nutrition_days, 1),
         exercise=round(total_exercise / num_exercise_days, 1)
     )
-
