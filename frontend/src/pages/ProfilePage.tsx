@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { profileApi } from "../services/api";
 import WeightTrend from "../components/WeightTrend";
 import WeeklyComparison from "../components/WeeklyComparison";
+import CustomNutritionSettings from "../components/CustomNutritionSettings";
 import "../styles/profile.css";
 
 interface UserProfile {
@@ -14,13 +15,30 @@ interface UserProfile {
   height?: number;
   weight?: number;
   goal?: string;
+  use_custom_nutrition?: boolean;
+  custom_calories?: number;
+  custom_protein_percent?: number;
+  custom_carbs_percent?: number;
+  custom_fat_percent?: number;
+}
+
+interface NutritionGoals {
+  bmr: number;
+  tdee: number;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  goal: string;
 }
 
 const ProfilePage: React.FC = () => {
   const { token, logout } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [nutritionGoals, setNutritionGoals] = useState<NutritionGoals | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [showCustomNutrition, setShowCustomNutrition] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
@@ -51,6 +69,17 @@ const ProfilePage: React.FC = () => {
           goal: data.goal || "maintain",
         });
         setError(undefined);
+
+        // Fetch nutrition goals if profile is complete
+        if (data.sex && data.age && data.height && data.weight) {
+          try {
+            const goals = await profileApi.getNutritionGoals(token || undefined);
+            setNutritionGoals(goals);
+          } catch (err) {
+            // Ignore error if profile is incomplete
+            console.log("Could not fetch nutrition goals:", err);
+          }
+        }
       } catch (err: any) {
         setError(err.message || "Failed to load profile");
       } finally {
@@ -90,12 +119,47 @@ const ProfilePage: React.FC = () => {
       setSuccess("Profile updated successfully!");
       setIsEditing(false);
 
+      // Refresh nutrition goals after profile update
+      if (updatedProfile.sex && updatedProfile.age && updatedProfile.height && updatedProfile.weight) {
+        try {
+          const goals = await profileApi.getNutritionGoals(token || undefined);
+          setNutritionGoals(goals);
+        } catch (err) {
+          console.log("Could not fetch nutrition goals:", err);
+        }
+      }
+
       // Refresh after 2 seconds
       setTimeout(() => {
         setSuccess(undefined);
       }, 2000);
     } catch (err: any) {
       setError(err.message || "Failed to update profile");
+    }
+  };
+
+  const handleCustomNutritionSave = async (settings: {
+    use_custom_nutrition: boolean;
+    custom_calories: number;
+    custom_protein_percent: number;
+    custom_carbs_percent: number;
+    custom_fat_percent: number;
+  }) => {
+    try {
+      const updatedProfile = await profileApi.updateProfile(settings, token || undefined);
+      setProfile(updatedProfile as any);
+      setSuccess("Nutrition settings updated successfully!");
+      setShowCustomNutrition(false);
+
+      // Refresh nutrition goals
+      const goals = await profileApi.getNutritionGoals(token || undefined);
+      setNutritionGoals(goals);
+
+      setTimeout(() => {
+        setSuccess(undefined);
+      }, 2000);
+    } catch (err: any) {
+      setError(err.message || "Failed to update nutrition settings");
     }
   };
 
@@ -270,6 +334,91 @@ const ProfilePage: React.FC = () => {
           </form>
         )}
       </div>
+
+      {/* Custom Nutrition Section */}
+      {nutritionGoals && !isEditing && (
+        <div className="nutrition-goals-container">
+          <div className="nutrition-goals-header">
+            <div>
+              <h2>Calories & Macronutrients</h2>
+              <p className="nutrition-subtitle">
+                {profile?.use_custom_nutrition ? (
+                  <span className="custom-badge">Custom</span>
+                ) : (
+                  <span className="recommended-badge">Recommended</span>
+                )}
+              </p>
+            </div>
+            <button
+              className="btn-customize"
+              onClick={() => setShowCustomNutrition(true)}
+            >
+              Customize my diet
+            </button>
+          </div>
+
+          <div className="nutrition-goals-cards">
+            <div className="nutrition-goal-card calories-goal">
+              <div className="goal-label">Daily Calories</div>
+              <div className="goal-value">{nutritionGoals.calories}</div>
+              <div className="goal-unit">kcal</div>
+            </div>
+
+            <div className="nutrition-goal-card carbs-goal">
+              <span className="macro-icon">🌾</span>
+              <div className="goal-content">
+                <div className="goal-label">Carbohydrates</div>
+                <div className="goal-details">
+                  <span className="goal-value">{nutritionGoals.carbs}g</span>
+                  <span className="goal-percent">
+                    ({Math.round((nutritionGoals.carbs * 4 / nutritionGoals.calories) * 100)}%)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="nutrition-goal-card protein-goal">
+              <span className="macro-icon">🥚</span>
+              <div className="goal-content">
+                <div className="goal-label">Protein</div>
+                <div className="goal-details">
+                  <span className="goal-value">{nutritionGoals.protein}g</span>
+                  <span className="goal-percent">
+                    ({Math.round((nutritionGoals.protein * 4 / nutritionGoals.calories) * 100)}%)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="nutrition-goal-card fat-goal">
+              <span className="macro-icon">🥑</span>
+              <div className="goal-content">
+                <div className="goal-label">Fat</div>
+                <div className="goal-details">
+                  <span className="goal-value">{nutritionGoals.fat}g</span>
+                  <span className="goal-percent">
+                    ({Math.round((nutritionGoals.fat * 9 / nutritionGoals.calories) * 100)}%)
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Nutrition Modal */}
+      {showCustomNutrition && nutritionGoals && (
+        <CustomNutritionSettings
+          useCustom={profile?.use_custom_nutrition || false}
+          customCalories={profile?.custom_calories || nutritionGoals.calories}
+          customProteinPercent={(profile?.custom_protein_percent || 0.25) * 100}
+          customCarbsPercent={(profile?.custom_carbs_percent || 0.50) * 100}
+          customFatPercent={(profile?.custom_fat_percent || 0.25) * 100}
+          recommendedCalories={nutritionGoals.calories}
+          onSave={handleCustomNutritionSave}
+          onCancel={() => setShowCustomNutrition(false)}
+        />
+      )}
 
       <WeeklyComparison token={token!} />
 

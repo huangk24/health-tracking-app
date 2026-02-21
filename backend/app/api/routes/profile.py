@@ -95,6 +95,23 @@ def update_profile(
             )
         user.goal = user_update.goal
 
+    # Update custom nutrition settings
+    if user_update.use_custom_nutrition is not None:
+        user.use_custom_nutrition = user_update.use_custom_nutrition
+    if user_update.custom_calories is not None:
+        if user_update.custom_calories < 1000 or user_update.custom_calories > 4000:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Custom calories must be between 1000 and 4000"
+            )
+        user.custom_calories = user_update.custom_calories
+    if user_update.custom_protein_percent is not None:
+        user.custom_protein_percent = user_update.custom_protein_percent
+    if user_update.custom_carbs_percent is not None:
+        user.custom_carbs_percent = user_update.custom_carbs_percent
+    if user_update.custom_fat_percent is not None:
+        user.custom_fat_percent = user_update.custom_fat_percent
+
     db.commit()
     db.refresh(user)
     return user
@@ -103,7 +120,33 @@ def update_profile(
 @router.get("/nutrition-goals", response_model=NutritionGoalsResponse)
 def get_nutrition_goals_endpoint(user: User = Depends(get_current_user)):
     """Get calculated nutrition goals for the current user"""
-    # Check if user has required profile information
+
+    # If user has custom nutrition settings enabled, return custom values
+    if user.use_custom_nutrition and user.custom_calories:
+        # Calculate macros based on custom percentages
+        protein_percent = user.custom_protein_percent or 0.25
+        carbs_percent = user.custom_carbs_percent or 0.50
+        fat_percent = user.custom_fat_percent or 0.25
+
+        protein_calories = user.custom_calories * protein_percent
+        carbs_calories = user.custom_calories * carbs_percent
+        fat_calories = user.custom_calories * fat_percent
+
+        protein_grams = round(protein_calories / 4)  # 4 cal per gram
+        carbs_grams = round(carbs_calories / 4)  # 4 cal per gram
+        fat_grams = round(fat_calories / 9)  # 9 cal per gram
+
+        return NutritionGoalsResponse(
+            bmr=0,  # Custom mode doesn't calculate BMR
+            tdee=0,  # Custom mode doesn't calculate TDEE
+            calories=user.custom_calories,
+            protein=protein_grams,
+            carbs=carbs_grams,
+            fat=fat_grams,
+            goal=user.goal or "maintain"
+        )
+
+    # Check if user has required profile information for calculated goals
     if not all([user.sex, user.age, user.height, user.weight]):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

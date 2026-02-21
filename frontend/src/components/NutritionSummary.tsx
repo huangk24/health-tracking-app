@@ -86,58 +86,56 @@ const NutritionSummary: React.FC<NutritionSummaryProps> = ({
           </div>
         )}
 
-        <div className="calories-visual">
-          <div className="calorie-chart">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={calorieChartData}
-                  dataKey="value"
-                  innerRadius={52}
-                  outerRadius={70}
-                  startAngle={90}
-                  endAngle={-270}
-                  paddingAngle={2}
-                >
-                  {calorieChartData.map((entry) => (
-                    <Cell key={entry.name} fill={entry.color} />
-                  ))}
-                </Pie>
-                <text
-                  x="50%"
-                  y="46%"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="calorie-chart-value"
-                >
-                  {Math.round(actual.calories)}
-                </text>
-                <text
-                  x="50%"
-                  y="58%"
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="calorie-chart-label"
-                >
-                  of {Math.round(safeGoal)}
-                </text>
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+        <div className="calorie-chart">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={calorieChartData}
+                dataKey="value"
+                innerRadius={40}
+                outerRadius={55}
+                startAngle={90}
+                endAngle={450}
+                paddingAngle={0}
+              >
+                {calorieChartData.map((entry) => (
+                  <Cell key={entry.name} fill={entry.color} />
+                ))}
+              </Pie>
+              <text
+                x="50%"
+                y="46%"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="calorie-chart-value"
+              >
+                {Math.round(actual.calories)}
+              </text>
+              <text
+                x="50%"
+                y="58%"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="calorie-chart-label"
+              >
+                of {Math.round(safeGoal)}
+              </text>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
 
-          <div className="calorie-metrics">
-            <div className="metric-row">
-              <span className="metric-label">Consumed</span>
-              <span className="metric-value">{Math.round(actual.calories)} kcal</span>
-            </div>
-            <div className="metric-row">
-              <span className="metric-label">Exercise</span>
-              <span className="metric-value">+{Math.round(consumption.calories)} kcal</span>
-            </div>
-            <div className="metric-row">
-              <span className="metric-label">Base goal</span>
-              <span className="metric-value">{Math.round(goals.calories)} kcal</span>
-            </div>
+        <div className="calorie-metrics">
+          <div className="metric-row">
+            <span className="metric-label">Consumed</span>
+            <span className="metric-value">{Math.round(actual.calories)} kcal</span>
+          </div>
+          <div className="metric-row">
+            <span className="metric-label">Exercise</span>
+            <span className="metric-value">+{Math.round(consumption.calories)} kcal</span>
+          </div>
+          <div className="metric-row">
+            <span className="metric-label">Base goal</span>
+            <span className="metric-value">{Math.round(goals.calories)} kcal</span>
           </div>
         </div>
       </div>
@@ -151,37 +149,37 @@ const NutritionSummary: React.FC<NutritionSummaryProps> = ({
           </div>
           <span className="macro-total">{Math.round(macroTotalBase)}g</span>
         </div>
-        <div className="macro-chart-body">
-          <div className="macro-donut">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={macroChartData}
-                  dataKey="value"
-                  innerRadius={48}
-                  outerRadius={70}
-                  paddingAngle={3}
-                >
-                  {macroChartData.map((entry) => (
-                    <Cell key={entry.name} fill={entry.color} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="macro-legend">
-            {macroChartData.map((macro) => (
-              <div key={macro.name} className="legend-item">
-                <span className="legend-dot" style={{ backgroundColor: macro.color }} />
-                <div>
-                  <span className="legend-title">{macro.name}</span>
-                  <span className="legend-value">
-                    {Math.round(macro.value)}g • {Math.round((macro.value / (macroTotalBase || 1)) * 100)}%
-                  </span>
-                </div>
+
+        <div className="macro-donut">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={macroChartData}
+                dataKey="value"
+                innerRadius={35}
+                outerRadius={55}
+                paddingAngle={2}
+              >
+                {macroChartData.map((entry) => (
+                  <Cell key={entry.name} fill={entry.color} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="macro-legend">
+          {macroChartData.map((macro) => (
+            <div key={macro.name} className="legend-item">
+              <span className="legend-dot" style={{ backgroundColor: macro.color }} />
+              <div>
+                <span className="legend-title">{macro.name}</span>
+                <span className="legend-value">
+                  {Math.round(macro.value)}g • {Math.round((macro.value / (macroTotalBase || 1)) * 100)}%
+                </span>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
 

@@ -13,13 +13,13 @@
 .nutrition-summary {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
-  margin: 30px 0;
+  gap: 16px;
+  margin: 20px 0;
   width: 100%;
   background: radial-gradient(circle at top left, #eef1ff 0%, #f8f9ff 40%, #f5fbff 100%);
   border: 1px solid #eef0ff;
   border-radius: 20px;
-  padding: 12px;
+  padding: 10px;
   font-family: "Sora", "Segoe UI", sans-serif;
   align-items: stretch;
 }
@@ -27,7 +27,7 @@
 .summary-card {
   background: linear-gradient(140deg, #7c6bff 0%, #5c4df0 45%, #3f3acb 100%);
   color: white;
-  padding: 24px;
+  padding: 20px 18px 18px 18px;
   border-radius: 16px;
   box-shadow: 0 14px 40px rgba(60, 55, 130, 0.25);
   position: relative;
@@ -48,7 +48,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 12px;
+  gap: 0;
 }
 
 .calories-header {
@@ -56,6 +56,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
+  margin-bottom: 8px;
 }
 
 .calories-card h3 {
@@ -80,7 +81,7 @@
 }
 
 .over-warning {
-  margin-top: 8px;
+  margin-bottom: 12px;
   align-self: flex-start;
   background: rgba(255, 255, 255, 0.18);
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -92,37 +93,29 @@
   border-radius: 999px;
 }
 
-.calories-visual {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-}
-
 .calorie-chart {
-  width: 130px;
-  height: 130px;
-  margin: -14px auto 0;
+  width: 140px;
+  height: 140px;
+  margin: 12px auto;
+  flex-shrink: 0;
 }
 
 .calorie-chart-value {
   fill: #ffffff;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
 }
 
 .calorie-chart-label {
   fill: rgba(255, 255, 255, 0.8);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .calorie-metrics {
   display: grid;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
-  text-align: center;
+  margin-top: 12px;
 }
 
 .metric-row {
@@ -153,10 +146,12 @@
   background: var(--summary-surface);
   border-radius: 16px;
   border: 1px solid var(--summary-border);
-  padding: 18px;
+  padding: 20px 18px 18px 18px;
   box-shadow: 0 10px 24px rgba(31, 27, 46, 0.08);
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  gap: 0;
   height: 100%;
 }
 
@@ -164,7 +159,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .macro-chart-header h3 {
@@ -189,23 +184,17 @@
   border-radius: 999px;
 }
 
-.macro-chart-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
-}
-
 .macro-donut {
   width: 140px;
   height: 140px;
-  margin: 18px auto 0;
+  margin: 12px auto;
+  flex-shrink: 0;
 }
 
 .macro-legend {
   display: grid;
-  gap: 10px;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .legend-item {
@@ -215,10 +204,10 @@
 }
 
 .legend-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  margin-top: 5px;
+  margin-top: 4px;
 }
 
 .legend-title {
@@ -237,13 +226,13 @@
 .macros-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: 10px;
   height: 100%;
 }
 
 .macro-card {
   background: white;
-  padding: 18px;
+  padding: 14px;
   border-radius: 14px;
   box-shadow: 0 10px 20px rgba(31, 27, 46, 0.08);
   border: 1px solid rgba(31, 27, 46, 0.06);
@@ -272,8 +261,8 @@
 }
 
 .macro-card h4 {
-  margin: 0 0 10px 0;
-  font-size: 13px;
+  margin: 0 0 6px 0;
+  font-size: 12px;
   color: var(--summary-muted);
   text-transform: uppercase;
   font-weight: 600;
@@ -281,16 +270,16 @@
 }
 
 .macro-number {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--summary-ink);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .macro-goal {
   font-size: 11px;
   color: var(--summary-muted);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .macro-card .over-warning {
@@ -349,16 +338,7 @@
     grid-template-columns: 1fr;
   }
 
-  .calories-visual {
-    grid-template-columns: 1fr;
-    justify-items: center;
-  }
-
   .calorie-metrics {
     width: 100%;
-  }
-
-  .macro-chart-body {
-    grid-template-columns: 1fr;
   }
 }

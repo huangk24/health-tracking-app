@@ -149,6 +149,31 @@ class NutritionService:
     @staticmethod
     def _resolve_goals(user: User) -> NutritionTotals:
         """Return personalized nutrition goals or fallback defaults."""
+        # Check if user has custom nutrition settings enabled
+        if user.use_custom_nutrition and user.custom_calories:
+            # Calculate macros based on custom percentages
+            protein_percent = user.custom_protein_percent or 0.25
+            carbs_percent = user.custom_carbs_percent or 0.50
+            fat_percent = user.custom_fat_percent or 0.25
+
+            protein_calories = user.custom_calories * protein_percent
+            carbs_calories = user.custom_calories * carbs_percent
+            fat_calories = user.custom_calories * fat_percent
+
+            protein_grams = round(protein_calories / 4)  # 4 cal per gram
+            carbs_grams = round(carbs_calories / 4)  # 4 cal per gram
+            fat_grams = round(fat_calories / 9)  # 9 cal per gram
+
+            return NutritionTotals(
+                calories=user.custom_calories,
+                protein_g=protein_grams,
+                carbs_g=carbs_grams,
+                fat_g=fat_grams,
+                fiber_g=25,  # Generic recommendation
+                sodium_mg=2300,  # Generic recommendation
+            )
+
+        # Use calculated goals if user profile is complete
         if user.sex and user.age and user.height and user.weight:
             nutrition_goals = get_nutrition_goals(
                 sex=user.sex,
