@@ -50,6 +50,11 @@ interface UserResponse {
   height?: number;
   weight?: number;
   goal?: string;
+  use_custom_nutrition?: boolean;
+  custom_calories?: number;
+  custom_protein_percent?: number;
+  custom_carbs_percent?: number;
+  custom_fat_percent?: number;
 }
 
 export const authApi = {
@@ -278,6 +283,10 @@ export const profileApi = {
       throw new Error(detail);
     }
     return response.json();
+  },
+
+  getNutritionGoals: async (token?: string) => {
+    return api.get("/profile/nutrition-goals", token);
   },
 
   getWeeklyComparison: async (token?: string) => {

@@ -3,6 +3,7 @@ A health tracking app that helps users track daily calorie intake and consumptio
 
 ## What It Does
 - **Daily dashboard** showing calories, macros, and remaining targets.
+- **Custom nutrition goals** - Override BMR/TDEE calculations with your own calorie and macro targets.
 - **Weight tracking** with daily logging and historical trend visualization.
 - **Meals and exercise logged by day** with a PST-based date selector.
 - **USDA FoodData Central search** for quick food logging.
@@ -110,6 +111,7 @@ npm run build
 
 - **User Authentication** - Register and login with JWT tokens
 - **Profile Management** - View and manage user profile with BMR/TDEE calculations
+- **Custom Nutrition Goals** - Override calculated targets with your own calorie and macro percentages (protein, carbs, fat)
 - **Nutrition Dashboard** - Calories ring, macro donut, and daily targets at a glance
 - **Weight Tracking** - Log daily weight with interactive historical trend chart
 - **Weekly Weight Comparison** - Analyze weight changes week-over-week with trend indicators and goal progress

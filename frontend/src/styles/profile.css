@@ -66,6 +66,7 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 32px;
+  margin-bottom: 32px;
 }
 
 .profile-view {
@@ -634,5 +635,437 @@
 
   .comparison-row {
     padding: 16px;
+  }
+}
+
+/* Custom Nutrition Section */
+.nutrition-goals-container {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.nutrition-goals-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.nutrition-goals-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+}
+
+.nutrition-subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.custom-badge,
+.recommended-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.custom-badge {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.recommended-badge {
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.btn-customize {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-customize:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.nutrition-goals-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.nutrition-goal-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.nutrition-goal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.nutrition-goal-card.calories-goal {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.nutrition-goal-card.carbs-goal {
+  border-color: #FF8A3D;
+}
+
+.nutrition-goal-card.protein-goal {
+  border-color: #4C8DFF;
+}
+
+.nutrition-goal-card.fat-goal {
+  border-color: #22C55E;
+}
+
+.nutrition-goal-card .macro-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.nutrition-goal-card .goal-content {
+  width: 100%;
+}
+
+.nutrition-goal-card .goal-label {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+
+.calories-goal .goal-label {
+  opacity: 0.9;
+}
+
+.nutrition-goal-card .goal-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 4px 0;
+}
+
+.nutrition-goal-card .goal-unit {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.nutrition-goal-card .goal-details {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+}
+
+.nutrition-goal-card .goal-percent {
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+/* Custom Nutrition Modal */
+.custom-nutrition-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.custom-nutrition-content {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.custom-nutrition-content h2 {
+  margin: 0 0 24px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+}
+
+.nutrition-mode-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.mode-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.mode-button:hover {
+  background: #f0f0f0;
+  border-color: #d0d0d0;
+}
+
+.mode-button.active {
+  background: #e3f2fd;
+  border-color: #1976d2;
+}
+
+.mode-icon {
+  font-size: 24px;
+}
+
+.mode-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.mode-subtitle {
+  font-size: 13px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.custom-calories-section {
+  margin-bottom: 32px;
+}
+
+.custom-calories-section label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.calorie-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.calorie-input {
+  flex: 1;
+  padding: 14px 16px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  text-align: center;
+  transition: border-color 0.2s ease;
+}
+
+.calorie-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.calorie-unit {
+  font-size: 16px;
+  font-weight: 600;
+  color: #666;
+}
+
+.input-hint {
+  font-size: 13px;
+  color: #999;
+  margin-top: 8px;
+}
+
+.macros-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 12px 0;
+}
+
+.macros-hint {
+  font-size: 13px;
+  color: #666;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.macro-slider-group {
+  margin-bottom: 24px;
+}
+
+.macro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.macro-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.macro-icon {
+  font-size: 20px;
+}
+
+.macro-values {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.macro-grams {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+
+.macro-percent {
+  font-size: 14px;
+  color: #666;
+}
+
+.macro-slider {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.macro-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid currentColor;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.macro-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid currentColor;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.carbs-slider {
+  background: linear-gradient(to right, #FFF4E6 0%, #FF8A3D 100%);
+  color: #FF8A3D;
+}
+
+.protein-slider {
+  background: linear-gradient(to right, #E3F2FD 0%, #4C8DFF 100%);
+  color: #4C8DFF;
+}
+
+.fat-slider {
+  background: linear-gradient(to right, #E8F5E9 0%, #22C55E 100%);
+  color: #22C55E;
+}
+
+.percent-warning {
+  padding: 12px;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  color: #856404;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 16px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .nutrition-goals-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-customize {
+    width: 100%;
+  }
+
+  .nutrition-goals-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .profile-container {
+    margin-bottom: 24px;
+  }
+
+  .custom-nutrition-content {
+    padding: 24px 20px;
+  }
+
+  .nutrition-mode-selector {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .modal-actions button {
+    width: 100%;
   }
 }

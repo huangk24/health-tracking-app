@@ -25,6 +25,11 @@ class UserResponse(BaseModel):
     height: Optional[int] = None
     weight: Optional[int] = None
     goal: Optional[str] = None
+    use_custom_nutrition: Optional[bool] = None
+    custom_calories: Optional[int] = None
+    custom_protein_percent: Optional[float] = None
+    custom_carbs_percent: Optional[float] = None
+    custom_fat_percent: Optional[float] = None
 
 
 class UserUpdate(BaseModel):
@@ -34,6 +39,11 @@ class UserUpdate(BaseModel):
     height: Optional[int] = None  # in cm
     weight: Optional[int] = None  # in kg
     goal: Optional[str] = None  # lose, maintain, gain
+    use_custom_nutrition: Optional[bool] = None
+    custom_calories: Optional[int] = None
+    custom_protein_percent: Optional[float] = None
+    custom_carbs_percent: Optional[float] = None
+    custom_fat_percent: Optional[float] = None
 
 
 class Token(BaseModel):
