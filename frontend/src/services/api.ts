@@ -197,6 +197,11 @@ export const nutritionApi = {
     return api.get(url);
   },
 
+  getUsdaFoodDetails: async (fdcId: number) => {
+    const url = `/nutrition/usda/${fdcId}/details`;
+    return api.get(url);
+  },
+
   createUsdaFoodItem: async (fdcId: number, token?: string) => {
     return api.post("/nutrition/food-items/usda", { fdc_id: fdcId }, token);
   },

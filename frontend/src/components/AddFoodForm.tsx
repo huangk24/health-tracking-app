@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { MealType, UsdaFoodSearchResult, CustomFood } from "../types/nutrition";
+import { MealType, UsdaFoodSearchResult, CustomFood, UsdaFoodDetailsResponse } from "../types/nutrition";
 import { nutritionApi } from "../services/api";
 import CustomFoodManager from "./CustomFoodManager";
 import "../styles/add-food-form.css";
@@ -28,6 +28,7 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, date, onFoodAdded }) =
   const [usdaQuery, setUsdaQuery] = useState("");
   const [usdaResults, setUsdaResults] = useState<UsdaFoodSearchResult[]>([]);
   const [selectedUsda, setSelectedUsda] = useState<UsdaFoodSearchResult | null>(null);
+  const [selectedUsdaDetails, setSelectedUsdaDetails] = useState<UsdaFoodDetailsResponse | null>(null);
   const [usdaGrams, setUsdaGrams] = useState("");
   const [customFoods, setCustomFoods] = useState<CustomFood[]>([]);
   const [selectedCustomFood, setSelectedCustomFood] = useState<CustomFood | null>(null);
@@ -49,12 +50,30 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, date, onFoodAdded }) =
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (selectedUsda) {
+      loadUsdaFoodDetails(selectedUsda.fdc_id);
+    } else {
+      setSelectedUsdaDetails(null);
+    }
+  }, [selectedUsda]);
+
   const loadCustomFoods = async () => {
     try {
       const foods = await nutritionApi.getCustomFoods(token);
       setCustomFoods(foods);
     } catch (err: any) {
       console.error("Failed to load custom foods:", err);
+    }
+  };
+
+  const loadUsdaFoodDetails = async (fdcId: number) => {
+    try {
+      const details = await nutritionApi.getUsdaFoodDetails(fdcId);
+      setSelectedUsdaDetails(details);
+    } catch (err: any) {
+      console.error("Failed to load USDA food details:", err);
+      setError("Failed to load nutritional information");
     }
   };
 
@@ -538,6 +557,63 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, date, onFoodAdded }) =
                       step="0.1"
                     />
                   </div>
+
+                  {selectedUsdaDetails && (
+                    <div className="nutrition-info-box">
+                      <div className="nutrition-header">Nutrition Info</div>
+                      <div className="nutrition-row">
+                        <span>Per 100g (standard)</span>
+                        <strong>{Math.round(selectedUsdaDetails.nutrients_per_100g.calories)} cal</strong>
+                      </div>
+                      {selectedUsdaDetails.nutrients_per_100g.protein_g > 0 && (
+                        <div className="nutrition-row">
+                          <span>Protein</span>
+                          <strong>{Math.round(selectedUsdaDetails.nutrients_per_100g.protein_g * 10) / 10}g</strong>
+                        </div>
+                      )}
+                      {selectedUsdaDetails.nutrients_per_100g.carbs_g > 0 && (
+                        <div className="nutrition-row">
+                          <span>Carbs</span>
+                          <strong>{Math.round(selectedUsdaDetails.nutrients_per_100g.carbs_g * 10) / 10}g</strong>
+                        </div>
+                      )}
+                      {selectedUsdaDetails.nutrients_per_100g.fat_g > 0 && (
+                        <div className="nutrition-row">
+                          <span>Fat</span>
+                          <strong>{Math.round(selectedUsdaDetails.nutrients_per_100g.fat_g * 10) / 10}g</strong>
+                        </div>
+                      )}
+                      {usdaGrams && parseFloat(usdaGrams) > 0 && (
+                        <div className="nutrition-divider">
+                          <div className="nutrition-section-title">
+                            For {usdaGrams}g
+                          </div>
+                          <div className="nutrition-row">
+                            <span>Calories</span>
+                            <strong>{Math.round((parseFloat(usdaGrams) / 100) * selectedUsdaDetails.nutrients_per_100g.calories)} cal</strong>
+                          </div>
+                          {selectedUsdaDetails.nutrients_per_100g.protein_g > 0 && (
+                            <div className="nutrition-row">
+                              <span>Protein</span>
+                              <strong>{Math.round((parseFloat(usdaGrams) / 100) * selectedUsdaDetails.nutrients_per_100g.protein_g * 10) / 10}g</strong>
+                            </div>
+                          )}
+                          {selectedUsdaDetails.nutrients_per_100g.carbs_g > 0 && (
+                            <div className="nutrition-row">
+                              <span>Carbs</span>
+                              <strong>{Math.round((parseFloat(usdaGrams) / 100) * selectedUsdaDetails.nutrients_per_100g.carbs_g * 10) / 10}g</strong>
+                            </div>
+                          )}
+                          {selectedUsdaDetails.nutrients_per_100g.fat_g > 0 && (
+                            <div className="nutrition-row">
+                              <span>Fat</span>
+                              <strong>{Math.round((parseFloat(usdaGrams) / 100) * selectedUsdaDetails.nutrients_per_100g.fat_g * 10) / 10}g</strong>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </>
               ) : (
                 <>

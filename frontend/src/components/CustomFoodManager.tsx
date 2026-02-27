@@ -290,7 +290,7 @@ const CustomFoodManager: React.FC<CustomFoodManagerProps> = ({
               </div>
 
               <div className="form-group">
-                <label htmlFor="calories">Calories (per {formData.reference_amount || "reference amount"}{formData.unit}) *</label>
+                <label htmlFor="calories">Calories (per {formData.reference_amount || "reference amount"} {formData.unit}) *</label>
                 <input
                   id="calories"
                   type="number"
@@ -305,7 +305,7 @@ const CustomFoodManager: React.FC<CustomFoodManagerProps> = ({
               </div>
 
               <h3 style={{ marginTop: "1rem", marginBottom: "0.5rem" }}>
-                Macros (per {formData.reference_amount || "reference amount"}{formData.unit}) - Optional
+                Macros (per {formData.reference_amount || "reference amount"} {formData.unit}) - Optional
               </h3>
 
               <div className="form-row">

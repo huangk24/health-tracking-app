@@ -14,6 +14,8 @@ from app.schemas.food_entry import (
     UsdaFoodSearchResponse,
     UsdaFoodSearchResult,
     UsdaFoodCreate,
+    UsdaFoodDetailsResponse,
+    NutritionTotals,
 )
 from app.schemas.custom_food import CustomFoodCreate, CustomFoodResponse
 from app.models.food_entry import FoodItem, CalorieEntry
@@ -199,6 +201,32 @@ def search_usda_foods(query: str):
             )
         )
     return UsdaFoodSearchResponse(results=results)
+
+
+@router.get("/usda/{fdc_id}/details", response_model=UsdaFoodDetailsResponse)
+def get_usda_food_details(fdc_id: int):
+    """Get detailed nutritional information for a USDA food item (per 100g)"""
+    food = UsdaService.get_food(fdc_id)
+    nutrients = UsdaService.extract_nutrients(food)
+    serving_size_grams = UsdaService.get_serving_size_grams(food) or 100.0
+    nutrients_per_100g = UsdaService.normalize_per_100g(nutrients, serving_size_grams)
+    
+    return UsdaFoodDetailsResponse(
+        fdc_id=fdc_id,
+        description=food.get("description") or "",
+        brand_name=food.get("brandName"),
+        data_type=food.get("dataType"),
+        serving_size=food.get("servingSize"),
+        serving_size_unit=food.get("servingSizeUnit"),
+        nutrients_per_100g=NutritionTotals(
+            calories=nutrients_per_100g["calories"],
+            protein_g=nutrients_per_100g["protein_g"],
+            carbs_g=nutrients_per_100g["carbs_g"],
+            fat_g=nutrients_per_100g["fat_g"],
+            fiber_g=nutrients_per_100g["fiber_g"],
+            sodium_mg=nutrients_per_100g["sodium_mg"],
+        ),
+    )
 
 
 @router.post("/food-items/usda", response_model=FoodItemResponse)
