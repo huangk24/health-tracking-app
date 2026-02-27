@@ -92,3 +92,30 @@ export interface UsdaFoodSearchResult {
 export interface UsdaFoodSearchResponse {
   results: UsdaFoodSearchResult[];
 }
+
+export interface CustomFood {
+  id: number;
+  user_id: number;
+  name: string;
+  unit: string;
+  reference_amount: number;
+  calories: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  fiber_g: number;
+  sodium_mg: number;
+  created_at: string;
+}
+
+export interface CustomFoodCreate {
+  name: string;
+  unit: string;
+  reference_amount: number;
+  calories: number;
+  protein_g?: number;
+  carbs_g?: number;
+  fat_g?: number;
+  fiber_g?: number;
+  sodium_mg?: number;
+}

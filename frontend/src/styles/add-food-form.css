@@ -118,6 +118,15 @@
   padding: 24px;
 }
 
+.add-food-form h3 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
 .form-group {
   margin-bottom: 20px;
 }
@@ -227,16 +236,50 @@
 
 .food-source-toggle {
   display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
+  gap: 0;
+  background: #f5f5f7;
+  border-radius: 10px;
+  padding: 4px;
+  position: relative;
 }
 
 .food-source-toggle label {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 16px;
   font-weight: 500;
-  color: #444;
+  font-size: 14px;
+  color: #666;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.food-source-toggle label:hover {
+  color: #333;
+}
+
+.food-source-toggle input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.food-source-toggle input[type="radio"]:checked + span {
+  color: #4f46e5;
+}
+
+.food-source-toggle label:has(input:checked) {
+  background: white;
+  color: #4f46e5;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .usda-search-row {
@@ -473,4 +516,158 @@
     left: 50%;
     transform: translate(-50%, -50%);
   }
+}
+
+/* Custom Food Manager Styles */
+.custom-food-manager {
+  padding: 24px;
+}
+
+.custom-foods-list {
+  margin-bottom: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.custom-food-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background: #fafafa;
+  transition: all 0.2s ease;
+}
+
+.custom-food-item:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.custom-food-info {
+  flex: 1;
+}
+
+.custom-food-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.custom-food-details {
+  font-size: 13px;
+  color: #666;
+}
+
+.custom-food-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-edit {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-edit:hover:not(:disabled) {
+  background-color: #e3f2fd;
+  transform: scale(1.1);
+}
+
+.btn-edit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-delete:hover:not(:disabled) {
+  background-color: #ffebee;
+  transform: scale(1.1);
+}
+
+.btn-delete:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.nutrition-info-box {
+  background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+  border: 1px solid #e0e7ff;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 14px;
+  margin-top: 16px;
+}
+
+.nutrition-info-box .nutrition-header {
+  font-weight: 700;
+  font-size: 15px;
+  color: #4f46e5;
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+}
+
+.nutrition-info-box .nutrition-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  color: #444;
+  font-size: 14px;
+}
+
+.nutrition-info-box .nutrition-row strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.nutrition-info-box .nutrition-divider {
+  margin: 12px 0;
+  padding-top: 12px;
+  border-top: 2px solid #e0e7ff;
+}
+
+.nutrition-info-box .nutrition-section-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: #6366f1;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nutrition-info-box .nutrition-section-title::before {
+  content: "→";
+  font-size: 16px;
+}
+
+.empty-message {
+  text-align: center;
+  color: #999;
+  padding: 40px 20px;
+  font-size: 14px;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #666;
 }

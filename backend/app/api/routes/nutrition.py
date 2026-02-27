@@ -15,7 +15,9 @@ from app.schemas.food_entry import (
     UsdaFoodSearchResult,
     UsdaFoodCreate,
 )
+from app.schemas.custom_food import CustomFoodCreate, CustomFoodResponse
 from app.models.food_entry import FoodItem, CalorieEntry
+from app.models.custom_food import CustomFood
 from app.models.user import User
 from app.services.nutrition import NutritionService
 from app.services.auth import decode_token
@@ -238,3 +240,99 @@ def create_food_item_from_usda(
     db.commit()
     db.refresh(food_item)
     return food_item
+
+
+@router.get("/custom-foods", response_model=list[CustomFoodResponse])
+def get_custom_foods(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Get all custom foods for the current user"""
+    custom_foods = (
+        db.query(CustomFood)
+        .filter(CustomFood.user_id == user.id)
+        .order_by(CustomFood.name)
+        .all()
+    )
+    return custom_foods
+
+
+@router.post("/custom-foods", response_model=CustomFoodResponse)
+def create_custom_food(
+    food_data: CustomFoodCreate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Create a new custom food for the current user"""
+    custom_food = CustomFood(
+        user_id=user.id,
+        name=food_data.name,
+        unit=food_data.unit,
+        reference_amount=food_data.reference_amount,
+        calories=food_data.calories,
+        protein_g=food_data.protein_g,
+        carbs_g=food_data.carbs_g,
+        fat_g=food_data.fat_g,
+        fiber_g=food_data.fiber_g,
+        sodium_mg=food_data.sodium_mg,
+    )
+    db.add(custom_food)
+    db.commit()
+    db.refresh(custom_food)
+    return custom_food
+
+
+@router.put("/custom-foods/{food_id}", response_model=CustomFoodResponse)
+def update_custom_food(
+    food_id: int,
+    food_data: CustomFoodCreate,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Update an existing custom food"""
+    custom_food = (
+        db.query(CustomFood)
+        .filter(CustomFood.id == food_id, CustomFood.user_id == user.id)
+        .first()
+    )
+    if not custom_food:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Custom food not found",
+        )
+
+    custom_food.name = food_data.name
+    custom_food.unit = food_data.unit
+    custom_food.reference_amount = food_data.reference_amount
+    custom_food.calories = food_data.calories
+    custom_food.protein_g = food_data.protein_g
+    custom_food.carbs_g = food_data.carbs_g
+    custom_food.fat_g = food_data.fat_g
+    custom_food.fiber_g = food_data.fiber_g
+    custom_food.sodium_mg = food_data.sodium_mg
+
+    db.commit()
+    db.refresh(custom_food)
+    return custom_food
+
+
+@router.delete("/custom-foods/{food_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_custom_food(
+    food_id: int,
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Delete a custom food"""
+    custom_food = (
+        db.query(CustomFood)
+        .filter(CustomFood.id == food_id, CustomFood.user_id == user.id)
+        .first()
+    )
+    if not custom_food:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Custom food not found",
+        )
+    db.delete(custom_food)
+    db.commit()
+    return None

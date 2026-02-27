@@ -21,8 +21,19 @@ A health tracking app that helps users track daily calorie intake and consumptio
 - **Python**: 3.11 or higher
 - **Node.js**: 18 or higher
 - **uv**: Fast Python package manager ([installation guide](https://github.com/astral-sh/uv))
+
+  **Linux/macOS:**
   ```bash
-  # Install uv (Linux/macOS)
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  ```
+
+  **Windows (PowerShell):**
+  ```powershell
+  powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+  ```
+
+  **Windows (WSL or Git Bash):**
+  ```bash
   curl -LsSf https://astral.sh/uv/install.sh | sh
   ```
 
@@ -35,10 +46,30 @@ A health tracking app that helps users track daily calorie intake and consumptio
 
 Start both backend and frontend servers with a single command:
 
+**Linux/macOS:**
 ```bash
 cd /workspaces/health-tracking-app
 chmod +x start-dev.sh  # Only needed once
 ./start-dev.sh
+```
+
+**Windows (Git Bash/WSL):**
+```bash
+cd /workspaces/health-tracking-app
+bash start-dev.sh
+```
+
+**Windows (PowerShell) - Manual Start:**
+```powershell
+# Terminal 1 - Backend
+cd backend
+uv sync
+uv run uvicorn app.main:app --reload
+
+# Terminal 2 - Frontend
+cd frontend
+npm install
+npm run dev
 ```
 
 This will:
@@ -116,9 +147,17 @@ npm run build
 - **Weight Tracking** - Log daily weight with interactive historical trend chart
 - **Weekly Weight Comparison** - Analyze weight changes week-over-week with trend indicators and goal progress
 - **Weight Entry Management** - Add and delete weight entries directly from the profile page
-- **Meal Tracking** - Log meals with USDA FoodData Central integration (breakfast, lunch, dinner, snacks)
+- **Meal Tracking** - Log meals with three food sources:
+  - **USDA Database** - Search USDA FoodData Central for 350,000+ foods
+  - **My Custom Foods** - Save your favorite foods with nutrition info for quick logging
+  - **Manual Entry** - Enter any food with custom nutrition values
+- **Custom Food Library** - Create, edit, and manage your personal collection of favorite foods with:
+  - Custom names and serving sizes
+  - Standardized units (g, oz, ml, cup, tbsp, tsp, serving, piece, slice)
+  - Complete nutrition info (calories, protein, carbs, fat, fiber, sodium)
+  - Proportional calculation - enter any amount and get scaled nutrition values
 - **Meal Details & Editing** - Expand meals for nutrient totals and edit or delete entries
 - **Exercise Logging** - Track exercises and calories burned
 - **Daily Summary** - View calorie intake vs. daily goals with real-time nutrition tracking
 - **PST Date Selector** - Browse and edit historical days, defaulting to current day in PST
-- **Responsive Design** - Works on desktop and mobile devices
+- **Responsive Design** - Works on desktop and mobile devices with refined, modern UI
