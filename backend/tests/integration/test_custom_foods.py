@@ -275,7 +275,7 @@ def test_create_food_entry_from_custom_food(client, test_user_token):
     )
     assert response.status_code == 200
     entry = response.json()
-    
+
     # Verify the totals are correct (50/100 = 0.5 * nutrition values)
     assert entry["totals"]["calories"] == 150  # 300 * 0.5
     assert entry["totals"]["protein_g"] == 12.5  # 25 * 0.5

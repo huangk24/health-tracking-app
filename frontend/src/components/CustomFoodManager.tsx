@@ -242,7 +242,7 @@ const CustomFoodManager: React.FC<CustomFoodManagerProps> = ({
           {isAddingNew && (
             <form onSubmit={handleSubmit} className="add-food-form">
               <h3>{editingFood ? "Edit Custom Food" : "Add New Custom Food"}</h3>
-              
+
               <div className="form-group">
                 <label htmlFor="name">Food Name *</label>
                 <input

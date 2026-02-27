@@ -300,7 +300,7 @@ def update_custom_food(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Custom food not found",
         )
-    
+
     custom_food.name = food_data.name
     custom_food.unit = food_data.unit
     custom_food.reference_amount = food_data.reference_amount
@@ -310,7 +310,7 @@ def update_custom_food(
     custom_food.fat_g = food_data.fat_g
     custom_food.fiber_g = food_data.fiber_g
     custom_food.sodium_mg = food_data.sodium_mg
-    
+
     db.commit()
     db.refresh(custom_food)
     return custom_food
@@ -336,4 +336,3 @@ def delete_custom_food(
     db.delete(custom_food)
     db.commit()
     return None
-
