@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { CalorieEntry, MealSummary, MealType } from "../types/nutrition";
 import { nutritionApi } from "../services/api";
 import "../styles/meals.css";
@@ -173,8 +174,10 @@ const MealSection: React.FC<MealSectionProps> = ({ meal, token, onEntryUpdated }
         </>
       )}
 
-      {selectedEntry && (
-        <div className="entry-modal-overlay" role="dialog" aria-modal="true">
+      {selectedEntry && createPortal(
+        <div className="entry-modal-overlay" role="dialog" aria-modal="true" onClick={(e) => {
+          if (e.target === e.currentTarget) closeEditor();
+        }}>
           <div className="entry-modal">
             <div className="entry-modal-header">
               <h4>Edit Food Entry</h4>
@@ -251,7 +254,8 @@ const MealSection: React.FC<MealSectionProps> = ({ meal, token, onEntryUpdated }
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

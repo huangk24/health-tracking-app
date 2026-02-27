@@ -93,6 +93,16 @@ export interface UsdaFoodSearchResponse {
   results: UsdaFoodSearchResult[];
 }
 
+export interface UsdaFoodDetailsResponse {
+  fdc_id: number;
+  description: string;
+  brand_name?: string | null;
+  data_type?: string | null;
+  serving_size?: number | null;
+  serving_size_unit?: string | null;
+  nutrients_per_100g: NutritionTotals;
+}
+
 export interface CustomFood {
   id: number;
   user_id: number;

@@ -114,3 +114,13 @@ class UsdaFoodSearchResponse(BaseModel):
 
 class UsdaFoodCreate(BaseModel):
     fdc_id: int
+
+
+class UsdaFoodDetailsResponse(BaseModel):
+    fdc_id: int
+    description: str
+    brand_name: str | None = None
+    data_type: str | None = None
+    serving_size: float | None = None
+    serving_size_unit: str | None = None
+    nutrients_per_100g: NutritionTotals
