@@ -26,3 +26,4 @@ class User(Base):
     calorie_entries = relationship("CalorieEntry", back_populates="user")
     exercise_entries = relationship("ExerciseEntry", back_populates="user")
     weight_entries = relationship("WeightEntry", back_populates="user")
+    custom_foods = relationship("CustomFood", back_populates="user")

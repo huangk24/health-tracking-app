@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { MealType, UsdaFoodSearchResult } from "../types/nutrition";
+import React, { useState, useEffect } from "react";
+import { MealType, UsdaFoodSearchResult, CustomFood } from "../types/nutrition";
 import { nutritionApi } from "../services/api";
+import CustomFoodManager from "./CustomFoodManager";
 import "../styles/add-food-form.css";
 
 interface AddFoodFormProps {
@@ -23,11 +24,15 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, date, onFoodAdded }) =
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [foodSource, setFoodSource] = useState<"usda" | "custom">("usda");
+  const [foodSource, setFoodSource] = useState<"usda" | "custom" | "saved_custom">("usda");
   const [usdaQuery, setUsdaQuery] = useState("");
   const [usdaResults, setUsdaResults] = useState<UsdaFoodSearchResult[]>([]);
   const [selectedUsda, setSelectedUsda] = useState<UsdaFoodSearchResult | null>(null);
   const [usdaGrams, setUsdaGrams] = useState("");
+  const [customFoods, setCustomFoods] = useState<CustomFood[]>([]);
+  const [selectedCustomFood, setSelectedCustomFood] = useState<CustomFood | null>(null);
+  const [customFoodQuantity, setCustomFoodQuantity] = useState("");
+  const [showCustomFoodManager, setShowCustomFoodManager] = useState(false);
 
   const [formData, setFormData] = useState({
     mealType: "breakfast" as MealType,
@@ -37,6 +42,21 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, date, onFoodAdded }) =
     carbs: "",
     fat: "",
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      loadCustomFoods();
+    }
+  }, [isOpen]);
+
+  const loadCustomFoods = async () => {
+    try {
+      const foods = await nutritionApi.getCustomFoods(token);
+      setCustomFoods(foods);
+    } catch (err: any) {
+      console.error("Failed to load custom foods:", err);
+    }
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -56,6 +76,17 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, date, onFoodAdded }) =
       }
       if (!usdaGrams || parseFloat(usdaGrams) <= 0) {
         setError("Amount must be a positive number of grams");
+        return false;
+      }
+      return true;
+    }
+    if (foodSource === "saved_custom") {
+      if (!selectedCustomFood) {
+        setError("Select a custom food item");
+        return false;
+      }
+      if (!customFoodQuantity || parseFloat(customFoodQuantity) <= 0) {
+        setError("Quantity must be a positive number");
         return false;
       }
       return true;
@@ -140,6 +171,39 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, date, onFoodAdded }) =
         setUsdaResults([]);
         setSelectedUsda(null);
         setUsdaGrams("");
+      } else if (foodSource === "saved_custom") {
+        // Create a FoodItem from the custom food with proper scaling
+        const foodItemResponse = await nutritionApi.createFoodItem(
+          {
+            name: selectedCustomFood!.name,
+            serving_size: `${selectedCustomFood!.reference_amount} ${selectedCustomFood!.unit}`,
+            serving_size_grams: selectedCustomFood!.unit === "g" ? selectedCustomFood!.reference_amount : null,
+            calories: selectedCustomFood!.calories,
+            protein_g: selectedCustomFood!.protein_g,
+            carbs_g: selectedCustomFood!.carbs_g,
+            fat_g: selectedCustomFood!.fat_g,
+            fiber_g: selectedCustomFood!.fiber_g,
+            sodium_mg: selectedCustomFood!.sodium_mg,
+          },
+          token
+        );
+
+        await nutritionApi.createFoodEntry(
+          {
+            food_item_id: foodItemResponse.id,
+            quantity: parseFloat(customFoodQuantity),
+            unit: selectedCustomFood!.unit,
+            meal_type: formData.mealType,
+            date: date,
+          },
+          token
+        );
+
+        setSuccessMessage(
+          `${selectedCustomFood!.name} added to ${formData.mealType}!`
+        );
+        setSelectedCustomFood(null);
+        setCustomFoodQuantity("");
       } else {
         const foodItemResponse = await nutritionApi.createFoodItem(
           {
@@ -233,7 +297,17 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, date, onFoodAdded }) =
                       checked={foodSource === "usda"}
                       onChange={() => setFoodSource("usda")}
                     />
-                    USDA Database
+                    <span>USDA Database</span>
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="foodSource"
+                      value="saved_custom"
+                      checked={foodSource === "saved_custom"}
+                      onChange={() => setFoodSource("saved_custom")}
+                    />
+                    <span>My Custom Foods</span>
                   </label>
                   <label>
                     <input
@@ -243,7 +317,7 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, date, onFoodAdded }) =
                       checked={foodSource === "custom"}
                       onChange={() => setFoodSource("custom")}
                     />
-                    Custom Food
+                    <span>Manual Entry</span>
                   </label>
                 </div>
               </div>
@@ -265,7 +339,141 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, date, onFoodAdded }) =
                 </select>
               </div>
 
-              {foodSource === "usda" ? (
+              {foodSource === "saved_custom" ? (
+                <>
+                  <div className="form-group">
+                    <label htmlFor="savedCustomFood">Select Custom Food *</label>
+                    <select
+                      id="savedCustomFood"
+                      value={selectedCustomFood?.id || ""}
+                      onChange={(e) => {
+                        const food = customFoods.find(f => f.id === parseInt(e.target.value));
+                        setSelectedCustomFood(food || null);
+                      }}
+                      required
+                    >
+                      <option value="">-- Choose a custom food --</option>
+                      {customFoods.map((food) => (
+                        <option key={food.id} value={food.id}>
+                          {food.name} ({food.calories} cal per {food.reference_amount} {food.unit})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {customFoods.length === 0 && (
+                    <p style={{ color: "#999", fontSize: "14px", marginBottom: "16px" }}>
+                      You haven't added any custom foods yet.{" "}
+                      <button
+                        type="button"
+                        onClick={() => setShowCustomFoodManager(true)}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: "#667eea",
+                          textDecoration: "underline",
+                          cursor: "pointer",
+                          padding: 0,
+                        }}
+                      >
+                        Add one now
+                      </button>
+                    </p>
+                  )}
+
+                  {customFoods.length > 0 && (
+                    <p style={{ fontSize: "14px", marginBottom: "16px" }}>
+                      <button
+                        type="button"
+                        onClick={() => setShowCustomFoodManager(true)}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: "#667eea",
+                          textDecoration: "underline",
+                          cursor: "pointer",
+                          padding: 0,
+                        }}
+                      >
+                        Manage Custom Foods
+                      </button>
+                    </p>
+                  )}
+
+                  {selectedCustomFood && (
+                    <>
+                      <div className="form-group">
+                        <label htmlFor="customQuantity">Amount ({selectedCustomFood.unit}) *</label>
+                        <input
+                          id="customQuantity"
+                          type="number"
+                          value={customFoodQuantity}
+                          onChange={(e) => setCustomFoodQuantity(e.target.value)}
+                          placeholder={`e.g., ${selectedCustomFood.reference_amount}`}
+                          min="0"
+                          step="0.1"
+                          required
+                        />
+                      </div>
+
+                      <div className="nutrition-info-box">
+                        <div className="nutrition-header">Nutrition Info</div>
+                        <div className="nutrition-row">
+                          <span>Per {selectedCustomFood.reference_amount} {selectedCustomFood.unit}</span>
+                          <strong>{selectedCustomFood.calories} cal</strong>
+                        </div>
+                        {selectedCustomFood.protein_g > 0 && (
+                          <div className="nutrition-row">
+                            <span>Protein</span>
+                            <strong>{selectedCustomFood.protein_g}g</strong>
+                          </div>
+                        )}
+                        {selectedCustomFood.carbs_g > 0 && (
+                          <div className="nutrition-row">
+                            <span>Carbs</span>
+                            <strong>{selectedCustomFood.carbs_g}g</strong>
+                          </div>
+                        )}
+                        {selectedCustomFood.fat_g > 0 && (
+                          <div className="nutrition-row">
+                            <span>Fat</span>
+                            <strong>{selectedCustomFood.fat_g}g</strong>
+                          </div>
+                        )}
+                        {customFoodQuantity && parseFloat(customFoodQuantity) > 0 && (
+                          <div className="nutrition-divider">
+                            <div className="nutrition-section-title">
+                              For {customFoodQuantity} {selectedCustomFood.unit}
+                            </div>
+                            <div className="nutrition-row">
+                              <span>Calories</span>
+                              <strong>{Math.round((parseFloat(customFoodQuantity) / selectedCustomFood.reference_amount) * selectedCustomFood.calories)} cal</strong>
+                            </div>
+                            {selectedCustomFood.protein_g > 0 && (
+                              <div className="nutrition-row">
+                                <span>Protein</span>
+                                <strong>{Math.round((parseFloat(customFoodQuantity) / selectedCustomFood.reference_amount) * selectedCustomFood.protein_g * 10) / 10}g</strong>
+                              </div>
+                            )}
+                            {selectedCustomFood.carbs_g > 0 && (
+                              <div className="nutrition-row">
+                                <span>Carbs</span>
+                                <strong>{Math.round((parseFloat(customFoodQuantity) / selectedCustomFood.reference_amount) * selectedCustomFood.carbs_g * 10) / 10}g</strong>
+                              </div>
+                            )}
+                            {selectedCustomFood.fat_g > 0 && (
+                              <div className="nutrition-row">
+                                <span>Fat</span>
+                                <strong>{Math.round((parseFloat(customFoodQuantity) / selectedCustomFood.reference_amount) * selectedCustomFood.fat_g * 10) / 10}g</strong>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : foodSource === "usda" ? (
                 <>
                   <div className="form-group">
                     <label htmlFor="usdaSearch">Search USDA Foods *</label>
@@ -427,6 +635,15 @@ const AddFoodForm: React.FC<AddFoodFormProps> = ({ token, date, onFoodAdded }) =
             </form>
           </div>
         </div>
+      )}
+
+      {showCustomFoodManager && (
+        <CustomFoodManager
+          token={token}
+          customFoods={customFoods}
+          onCustomFoodsChanged={loadCustomFoods}
+          onClose={() => setShowCustomFoodManager(false)}
+        />
       )}
     </>
   );

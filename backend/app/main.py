@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 from app.api.router import api_router
 from app.database import engine, Base
-from app.models import user, food_entry, exercise, weight_entry  # noqa: F401
+from app.models import user, food_entry, exercise, weight_entry, custom_food  # noqa: F401
 
 load_dotenv()
 

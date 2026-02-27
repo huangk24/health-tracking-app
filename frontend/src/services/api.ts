@@ -200,6 +200,59 @@ export const nutritionApi = {
   createUsdaFoodItem: async (fdcId: number, token?: string) => {
     return api.post("/nutrition/food-items/usda", { fdc_id: fdcId }, token);
   },
+
+  getCustomFoods: async (token?: string) => {
+    return api.get("/nutrition/custom-foods", token);
+  },
+
+  createCustomFood: async (data: any, token?: string) => {
+    return api.post("/nutrition/custom-foods", data, token);
+  },
+
+  updateCustomFood: async (foodId: number, data: any, token?: string) => {
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await fetch(`${API_BASE_URL}/nutrition/custom-foods/${foodId}`, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      let detail = response.statusText || "Request failed";
+      try {
+        const error = await response.json();
+        detail = error.detail || JSON.stringify(error);
+      } catch (err) {
+        // Ignore parsing errors to preserve default detail.
+      }
+      throw new Error(detail);
+    }
+    return response.json();
+  },
+
+  deleteCustomFood: async (foodId: number, token?: string) => {
+    const headers: HeadersInit = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    const response = await fetch(`${API_BASE_URL}/nutrition/custom-foods/${foodId}`, {
+      method: "DELETE",
+      headers,
+    });
+    if (!response.ok) {
+      let detail = response.statusText || "Request failed";
+      try {
+        const error = await response.json();
+        detail = error.detail || JSON.stringify(error);
+      } catch (err) {
+        // Ignore parsing errors to preserve default detail.
+      }
+      throw new Error(detail);
+    }
+    return;
+  },
 };
 
 export const exerciseApi = {
