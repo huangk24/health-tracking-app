@@ -49,7 +49,7 @@ const HomePage: React.FC = () => {
         }}>
           🏥💪🥗
         </div>
-        
+
         <h1 style={{
           fontSize: "56px",
           fontWeight: "800",
@@ -59,7 +59,7 @@ const HomePage: React.FC = () => {
         }}>
           Health Tracking App
         </h1>
-        
+
         <p style={{
           fontSize: "24px",
           margin: "0 0 48px 0",

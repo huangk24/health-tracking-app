@@ -51,7 +51,7 @@ Comprehensive design refresh transforming the app from a plain, functional inter
 - Professional tagline and description
 
 #### Authentication Pages (Login/Register)
-**Files**: 
+**Files**:
 - `frontend/src/styles/auth.css`
 - `frontend/src/pages/LoginPage.tsx`
 - `frontend/src/pages/RegisterPage.tsx`
@@ -115,7 +115,7 @@ Comprehensive design refresh transforming the app from a plain, functional inter
 #### Edit Food Modal Fix
 **Problem**: Modal was clipped and not displaying properly due to parent container's `overflow: hidden`.
 
-**Solution**: 
+**Solution**:
 - Implemented React Portal (`createPortal` from `react-dom`)
 - Modal now renders directly under `document.body`
 - Bypasses parent container overflow restrictions

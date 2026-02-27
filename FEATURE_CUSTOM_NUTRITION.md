@@ -94,7 +94,7 @@
 ### Custom Nutrition Modal:
 - **Mode selector**: Large, easy-to-tap buttons
 - **Calorie input**: Large, centered input with validation
-- **Macro sliders**: 
+- **Macro sliders**:
   - Carbs: Orange gradient
   - Protein: Blue gradient
   - Fat: Green gradient

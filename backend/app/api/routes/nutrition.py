@@ -210,7 +210,7 @@ def get_usda_food_details(fdc_id: int):
     nutrients = UsdaService.extract_nutrients(food)
     serving_size_grams = UsdaService.get_serving_size_grams(food) or 100.0
     nutrients_per_100g = UsdaService.normalize_per_100g(nutrients, serving_size_grams)
-    
+
     return UsdaFoodDetailsResponse(
         fdc_id=fdc_id,
         description=food.get("description") or "",
