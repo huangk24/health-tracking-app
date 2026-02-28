@@ -456,4 +456,93 @@ body {
   .date-week {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
+
+  /* Dashboard header responsive fixes */
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 28px;
+  }
+
+  .header-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .profile-btn,
+  .logout-btn {
+    flex: 1;
+    min-width: 120px;
+    justify-content: center;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .dashboard-page {
+    padding: 20px 12px;
+  }
+
+  .meals-section {
+    padding: 20px 16px;
+    border-radius: 16px;
+  }
+
+  .date-strip {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .date-title {
+    font-size: 18px;
+  }
+
+  .date-input {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+/* Tablet-specific styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .dashboard-page {
+    max-width: 900px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 32px;
+  }
+
+  .header-actions {
+    flex-wrap: nowrap;
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .dashboard-header h1 {
+    font-size: 24px;
+  }
+
+  .profile-btn,
+  .logout-btn {
+    min-width: 100px;
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .date-title {
+    font-size: 16px;
+  }
+
+  .date-nav {
+    width: 34px;
+    height: 34px;
+  }
 }

@@ -3,7 +3,7 @@ A health tracking app that helps users track daily calorie intake and consumptio
 
 ## 🌐 Live Demo
 
-**Frontend**: https://health-tracking-frontend.onrender.com  
+**Frontend**: https://health-tracking-frontend.onrender.com
 **Backend API**: https://health-tracking-backend.onrender.com
 
 > **Note**: Free tier services may take 30-60 seconds to wake up from sleep on first request.
@@ -15,6 +15,8 @@ A health tracking app that helps users track daily calorie intake and consumptio
 - **Meals and exercise logged by day** with a PST-based date selector.
 - **USDA FoodData Central search** for quick food logging.
 - **Edit and delete entries** for any day, including past days.
+- **Responsive design** - Fully optimized for mobile phones, tablets, and desktop with adaptive layouts.
+- **New user onboarding** - Welcome modal guides first-time users through setup process.
 
 ## Tech Stack
 - **Frontend**: React + Vite + TypeScript
@@ -166,7 +168,16 @@ npm run build
   - Proportional calculation - enter any amount and get scaled nutrition values
 - **Meal Details & Editing** - Expand meals for nutrient totals and edit or delete entries
 - **Exercise Logging** - Track exercises and calories burned
-- **Daily Summary** - View calorie intake vs. daily goals with real-time nutrition tracking
+- **Daily Summary** - ViewFully optimized for mobile phones (≤768px), tablets (769px-1024px), and desktop with:
+  - Adaptive layouts that stack vertically on small screens
+  - Touch-friendly button sizing (minimum 44px tap targets)
+  - Single/multi-column grids based on screen size
+  - Optimized typography and spacing for each breakpoint
+- **New User Onboarding** - Interactive welcome modal that appears on first registration with:
+  - Step-by-step guide to complete profile setup
+  - Clear explanation of nutrition goal calculation
+  - Smooth animations and modern design
+  - One-time display (uses localStorage)acking
 - **PST Date Selector** - Browse and edit historical days, defaulting to current day in PST
 - **Responsive Design** - Works on desktop and mobile devices with refined, modern UI
 
