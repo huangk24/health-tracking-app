@@ -3,7 +3,7 @@ A health tracking app that helps users track daily calorie intake and consumptio
 
 ## 🌐 Live Demo
 
-**Frontend**: https://health-tracking-frontend.onrender.com  
+**Frontend**: https://health-tracking-frontend.onrender.com
 **Backend API**: https://health-tracking-backend.onrender.com
 
 > **Note**: Free tier services may take 30-60 seconds to wake up from sleep on first request.
