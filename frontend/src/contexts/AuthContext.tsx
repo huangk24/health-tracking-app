@@ -48,6 +48,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     await authApi.register({ username, password });
     // Auto-login after registration
     await login(username, password);
+    // Mark as new user to show welcome modal
+    localStorage.setItem("showWelcome", "true");
   };
 
   const logout = () => {

@@ -297,8 +297,13 @@
 }
 
 @media (max-width: 768px) {
+  .profile-page {
+    padding: 20px 12px;
+  }
+
   .profile-container {
     padding: 20px;
+    border-radius: 16px;
   }
 
   .profile-view {
@@ -313,25 +318,51 @@
   .profile-header {
     flex-direction: column;
     gap: 16px;
-    align-items: flex-start;
+    align-items: stretch;
+    padding: 20px;
   }
 
   .header-left {
-    flex-direction: column;
+    flex-direction: row;
     gap: 12px;
     width: 100%;
+    align-items: center;
   }
 
   .btn-back {
-    width: 100%;
-    text-align: left;
+    flex-shrink: 0;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .btn-back::before {
+    content: "←";
+    font-size: 14px;
   }
 
   .profile-header h1 {
-    font-size: 24px;
+    font-size: 22px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .logout-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .btn-edit {
+    width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .form-actions .btn-primary,
+  .form-actions .btn-secondary {
     width: 100%;
   }
 }
@@ -636,6 +667,29 @@
 }
 
 @media (max-width: 768px) {
+  .nutrition-goals-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .btn-customize {
+    width: 100%;
+  }
+
+  .nutrition-goals-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .nutrition-goal-card {
+    padding: 16px;
+  }
+
+  .nutrition-goal-card .goal-value {
+    font-size: 24px;
+  }
+
   .week-labels {
     flex-direction: column;
     gap: 8px;
@@ -662,6 +716,50 @@
 
   .comparison-row {
     padding: 16px;
+  }
+}
+
+/* Tablet-specific styles */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .profile-page {
+    max-width: 700px;
+  }
+
+  .nutrition-goals-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .weight-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .profile-header h1 {
+    font-size: 18px;
+  }
+
+  .btn-back {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .logout-btn {
+    font-size: 12px;
+    padding: 10px 16px;
+  }
+
+  .info-item label {
+    font-size: 11px;
+  }
+
+  .info-item p {
+    font-size: 14px;
+  }
+
+  .weight-stats {
+    grid-template-columns: 1fr;
   }
 }
 

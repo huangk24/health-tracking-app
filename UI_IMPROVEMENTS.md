@@ -241,17 +241,78 @@ Comprehensive design refresh transforming the app from a plain, functional inter
 5. **Mobile App**: Progressive Web App (PWA) capabilities
 6. **Accessibility**: Screen reader optimization
 
+### 4. Responsive Design Overhaul (February 28, 2026)
+
+**Problem**: Interface not optimized for mobile phones and tablets, causing layout issues and poor usability on smaller screens.
+
+**Solution**: Comprehensive responsive design implementation with multiple breakpoints.
+
+**Mobile Improvements (≤768px)**:
+- Dashboard and profile headers stack vertically
+- Action buttons expand to full width for easy touch interaction
+- Nutrition goal cards switch to single-column layout
+- Weight stats grid adapts to 2 columns on tablet, 1 on mobile
+- Touch-friendly button sizing (minimum 44px tap targets)
+
+**Tablet Improvements (769px-1024px)**:
+- Optimized 2-column layouts for nutrition and weight stats
+- Max-width constraints for comfortable reading
+- Maintained full functionality with proper spacing
+
+**Extra Small Devices (≤480px)**:
+- Further reduced font sizes and padding
+- Single-column layouts for all statistics
+- Compact headers to maximize content space
+
+**Components Updated**:
+- `frontend/src/styles/global.css`: Dashboard responsive styles
+- `frontend/src/styles/profile.css`: Profile page responsive styles
+- `frontend/src/styles/welcome-modal.css`: Modal responsiveness
+
+### 5. New User Onboarding Experience (February 28, 2026)
+
+**Problem**: New users redirected to profile page with no guidance on what to do next.
+
+**Solution**: Welcome modal with clear, visually appealing onboarding instructions.
+
+**Features**:
+- **Auto-display**: Shows automatically for first-time users after registration
+- **Three-step guide**:
+  1. 📝 Complete your profile with basic information
+  2. 🎯 Get personalized nutrition goals
+  3. 🍽️ Start tracking meals and progress
+- **One-time display**: Uses localStorage to prevent repeated shows
+- **Smooth animations**: Fade-in overlay, slide-up content, waving hand icon
+- **Fully responsive**: Adapts to all screen sizes with proper scaling
+
+**Implementation**:
+- New `WelcomeModal` component with modern card design
+- Integrated with auth flow via localStorage flag
+- Purple gradient theme matching app design system
+- Click outside to dismiss functionality
+
+**Files Created**:
+- `frontend/src/components/WelcomeModal.tsx`
+- `frontend/src/styles/welcome-modal.css`
+
+**Files Modified**:
+- `frontend/src/pages/ProfilePage.tsx`: Integrated welcome modal display logic
+- `frontend/src/contexts/AuthContext.tsx`: Added registration flag for welcome modal
+
 ## Files Modified
 
 ### Backend (2 files)
 - `backend/app/api/routes/nutrition.py`
 - `backend/app/schemas/food_entry.py`
 
-### Frontend (13 files)
+### Frontend (17 files)
 - `frontend/src/components/AddFoodForm.tsx`
 - `frontend/src/components/CustomFoodManager.tsx`
 - `frontend/src/components/MealSection.tsx`
+- `frontend/src/components/WelcomeModal.tsx` ⭐ NEW
 - `frontend/src/pages/HomePage.tsx`
+- `frontend/src/pages/ProfilePage.tsx`
+- `frontend/src/contexts/AuthContext.tsx`
 - `frontend/src/services/api.ts`
 - `frontend/src/types/nutrition.ts`
 - `frontend/src/styles/add-food-form.css`
@@ -259,6 +320,7 @@ Comprehensive design refresh transforming the app from a plain, functional inter
 - `frontend/src/styles/global.css`
 - `frontend/src/styles/meals.css`
 - `frontend/src/styles/profile.css`
+- `frontend/src/styles/welcome-modal.css` ⭐ NEW
 
 ## Commit History
 
@@ -268,9 +330,11 @@ This update represents a comprehensive UI/UX overhaul completed in multiple stag
 2. **Design System**: Comprehensive styling refresh across all pages
 3. **Bug Fixes**: Icon bleeding and modal display issues
 4. **Spacing Refinements**: Padding and spacing improvements throughout
+5. **Responsive Design**: Mobile and tablet optimization with multiple breakpoints
+6. **User Onboarding**: Welcome modal for new users with step-by-step guidance
 
 ---
 
-**Date**: February 27, 2026
-**Branch**: feat/nutrition-dashboard
+**Latest Update**: February 28, 2026
+**Branch**: feat/responsive-welcome
 **Status**: ✅ Complete and tested

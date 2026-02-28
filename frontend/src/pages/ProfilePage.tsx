@@ -5,6 +5,7 @@ import { profileApi } from "../services/api";
 import WeightTrend from "../components/WeightTrend";
 import WeeklyComparison from "../components/WeeklyComparison";
 import CustomNutritionSettings from "../components/CustomNutritionSettings";
+import WelcomeModal from "../components/WelcomeModal";
 import "../styles/profile.css";
 
 interface UserProfile {
@@ -39,6 +40,7 @@ const ProfilePage: React.FC = () => {
   const [nutritionGoals, setNutritionGoals] = useState<NutritionGoals | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showCustomNutrition, setShowCustomNutrition] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const [success, setSuccess] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
@@ -55,6 +57,13 @@ const ProfilePage: React.FC = () => {
     if (!token) {
       navigate("/login");
       return;
+    }
+
+    // Check if this is a new user who just registered
+    const isNewUser = localStorage.getItem("showWelcome") === "true";
+    if (isNewUser) {
+      setShowWelcomeModal(true);
+      localStorage.removeItem("showWelcome");
     }
 
     const fetchProfile = async () => {
@@ -178,10 +187,17 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div className="profile-page">
+      {showWelcomeModal && (
+        <WelcomeModal
+          username={profile?.username || "User"}
+          onClose={() => setShowWelcomeModal(false)}
+        />
+      )}
+
       <div className="profile-header">
         <div className="header-left">
           <button onClick={() => navigate("/dashboard")} className="btn-back">
-            ← Back to Dashboard
+            Back
           </button>
           <h1>My Profile</h1>
         </div>
