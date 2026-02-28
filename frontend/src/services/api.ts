@@ -1,5 +1,12 @@
 // Detect backend URL based on environment
 export const getApiBaseUrl = () => {
+  // Production: Use environment variable set by Render
+  if (import.meta.env.VITE_API_URL) {
+    console.log('Using production API URL:', import.meta.env.VITE_API_URL);
+    return import.meta.env.VITE_API_URL;
+  }
+
+  // SSR or testing environment
   if (typeof window === 'undefined') return 'http://localhost:8000';
 
   const hostname = window.location.hostname;
