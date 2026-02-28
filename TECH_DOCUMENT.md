@@ -9,10 +9,16 @@
 ## Selected Stack
 - **Frontend**: React + Vite + TypeScript (CSS modules + global styles)
 - **Backend**: FastAPI (Python) + SQLAlchemy
-- **Database**: SQLite (auto-creates tables on startup)
+- **Database**: PostgreSQL (Neon) in production, SQLite for local development
+- **Hosting**: Render.com (frontend static site + backend web service)
 - **Auth**: JWT tokens + bcrypt password hashing
 - **Nutrition Data**: USDA FoodData Central API
 - **Package Management**: uv (Python), npm (JavaScript)
+
+## Live Deployment
+- **Frontend**: https://health-tracking-frontend.onrender.com
+- **Backend API**: https://health-tracking-backend.onrender.com
+- **Database**: PostgreSQL on Neon.tech (512MB free tier)
 
 ## Technology Choices & Rationale
 
@@ -58,7 +64,7 @@
 - **Relationship Management**: Declarative relationships (User → FoodEntry) prevent foreign key mistakes.
 - **Type Safety**: Models with type hints integrate seamlessly with FastAPI's Pydantic validation.
 
-### Database: SQLite (Relational)
+### Database: SQLite (Local) → PostgreSQL (Production)
 
 **Relational over NoSQL (MongoDB/Firebase)**
 - **Data Structure**: Health tracking has strict schemas (User, FoodEntry, WeightEntry) with foreign key relationships. NoSQL's flexibility is unnecessary.
@@ -66,12 +72,14 @@
 - **Query Power**: SQL joins are essential for aggregating meals + exercises + goals in single queries. NoSQL requires multiple round-trips.
 - **Data Integrity**: Constraints (unique usernames, non-null calories) prevent corrupt data. NoSQL validation is application-level only.
 
-**SQLite over PostgreSQL (for now)**
-- **Simplicity**: Zero configuration, single file database. Perfect for MVP and local development.
-- **Performance**: Read-heavy workload (dashboard queries) performs identically to Postgres at <100K users.
-- **Migration Path**: SQLAlchemy abstracts the database, so switching to Postgres requires only connection string change.
-- **Cost Efficiency**: No managed database costs during early stages. Deploy with app container.
-- **Limitations Acknowledged**: Will migrate to PostgreSQL when scaling requires concurrent writes, full-text search, or multi-region replication.
+**SQLite (Development) + PostgreSQL (Production)**
+- **Development**: SQLite for simplicity, zero configuration, single file database. Perfect for local development.
+- **Production**: PostgreSQL on Neon.tech for scalability, concurrent writes, and cloud infrastructure.
+- **Migration**: SQLAlchemy abstracts the database via `DATABASE_URL` environment variable:
+  - Local: `sqlite:///./health_tracking.db` (default fallback)
+  - Production: `postgresql://user:password@host/database` (from Neon)
+- **Code Changes**: Minimal - added `psycopg2-binary` driver and conditional `connect_args` in [backend/app/database.py](backend/app/database.py)
+- **Benefits**: PostgreSQL provides better concurrency, full-text search capability, JSON operations, and multi-region replication for future scaling.
 
 ### Authentication: JWT + bcrypt
 

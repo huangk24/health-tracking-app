@@ -1,6 +1,13 @@
 # Health Tracking App
 A health tracking app that helps users track daily calorie intake and consumption for weight gain or loss.
 
+## 🌐 Live Demo
+
+**Frontend**: https://health-tracking-frontend.onrender.com  
+**Backend API**: https://health-tracking-backend.onrender.com
+
+> **Note**: Free tier services may take 30-60 seconds to wake up from sleep on first request.
+
 ## What It Does
 - **Daily dashboard** showing calories, macros, and remaining targets.
 - **Custom nutrition goals** - Override BMR/TDEE calculations with your own calorie and macro targets.
@@ -12,7 +19,8 @@ A health tracking app that helps users track daily calorie intake and consumptio
 ## Tech Stack
 - **Frontend**: React + Vite + TypeScript
 - **Backend**: FastAPI + SQLAlchemy
-- **Database**: SQLite (auto-creates tables on startup)
+- **Database**: PostgreSQL (Neon) in production, SQLite for local development
+- **Hosting**: Render.com (frontend static site + backend web service)
 - **Auth**: JWT tokens + bcrypt password hashing
 - **Testing**: pytest (backend) + vitest (frontend)
 - **Package Manager**: uv (Python) + npm (JavaScript)
@@ -161,3 +169,24 @@ npm run build
 - **Daily Summary** - View calorie intake vs. daily goals with real-time nutrition tracking
 - **PST Date Selector** - Browse and edit historical days, defaulting to current day in PST
 - **Responsive Design** - Works on desktop and mobile devices with refined, modern UI
+
+## Deployment
+
+The app is deployed on Render.com with the following architecture:
+- **Frontend**: Static site at https://health-tracking-frontend.onrender.com
+- **Backend**: Web service at https://health-tracking-backend.onrender.com
+- **Database**: PostgreSQL on Neon.tech
+
+For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+### Quick Deployment Overview
+
+1. **Database**: Create PostgreSQL database on [Neon](https://neon.tech)
+2. **Backend**: Deploy to Render as Web Service
+   - Build: `cd backend && uv sync`
+   - Start: `cd backend && uv run uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - Environment: `DATABASE_URL`, `SECRET_KEY`
+3. **Frontend**: Deploy to Render as Static Site
+   - Build: `cd frontend && npm install && npm run build`
+   - Publish: `frontend/dist`
+   - Redirects: Configure `/*` → `/index.html` in Render dashboard for SPA routing
