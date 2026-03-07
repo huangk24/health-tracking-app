@@ -128,11 +128,11 @@ docs/
 
 Our documentation aims to:
 
-✅ **Be Comprehensive** - Cover all aspects of the project  
-✅ **Be Accessible** - Easy to find and understand  
-✅ **Be Up-to-date** - Reflect current codebase state  
-✅ **Be Practical** - Include examples and code samples  
-✅ **Be Maintainable** - Easy for contributors to update  
+✅ **Be Comprehensive** - Cover all aspects of the project
+✅ **Be Accessible** - Easy to find and understand
+✅ **Be Up-to-date** - Reflect current codebase state
+✅ **Be Practical** - Include examples and code samples
+✅ **Be Maintainable** - Easy for contributors to update
 
 ---
 
@@ -173,5 +173,5 @@ This documentation is part of the Health Tracking App project and is licensed un
 
 ---
 
-**Last Updated**: March 6, 2026  
+**Last Updated**: March 6, 2026
 **Documentation Version**: 1.0.0

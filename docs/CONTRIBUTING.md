@@ -136,11 +136,11 @@ from app.models.user import User
 def get_user_by_username(db: Session, username: str) -> Optional[User]:
     """
     Retrieve a user by username.
-    
+
     Args:
         db: Database session
         username: Username to search for
-        
+
     Returns:
         User object if found, None otherwise
     """
@@ -198,12 +198,12 @@ interface AddFoodFormProps {
 
 export const AddFoodForm: React.FC<AddFoodFormProps> = ({ onSubmit, onCancel }) => {
   const [foodName, setFoodName] = useState<string>("");
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     // Implementation
   };
-  
+
   return (
     <form onSubmit={handleSubmit}>
       {/* Form fields */}
@@ -318,7 +318,7 @@ Hooks include:
    ```bash
    # Backend tests
    cd backend && uv run pytest tests/ -v
-   
+
    # Frontend tests
    cd frontend && npm test
    ```
@@ -484,12 +484,12 @@ describe('AddFoodForm', () => {
   it('calls onSubmit when form is valid', async () => {
     const handleSubmit = jest.fn();
     render(<AddFoodForm onSubmit={handleSubmit} onCancel={jest.fn()} />);
-    
+
     fireEvent.change(screen.getByLabelText(/food name/i), {
       target: { value: 'Apple' }
     });
     fireEvent.click(screen.getByText(/add food/i));
-    
+
     await waitFor(() => expect(handleSubmit).toHaveBeenCalled());
   });
 });

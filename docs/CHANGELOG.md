@@ -341,5 +341,5 @@ See the full [Contributors List](https://github.com/huangk24/health-tracking-app
 
 ---
 
-**[Unreleased]**: https://github.com/huangk24/health-tracking-app/compare/v1.0.0...HEAD  
+**[Unreleased]**: https://github.com/huangk24/health-tracking-app/compare/v1.0.0...HEAD
 **[1.0.0]**: https://github.com/huangk24/health-tracking-app/releases/tag/v1.0.0

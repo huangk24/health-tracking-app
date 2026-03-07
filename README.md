@@ -9,8 +9,8 @@ A comprehensive health tracking application that helps users monitor daily calor
 
 ## 🌐 Live Demo
 
-**Frontend**: https://health-tracking-frontend.onrender.com  
-**Backend API**: https://health-tracking-backend.onrender.com  
+**Frontend**: https://health-tracking-frontend.onrender.com
+**Backend API**: https://health-tracking-backend.onrender.com
 **API Docs**: https://health-tracking-backend.onrender.com/docs
 
 > **Note**: Free tier services may take 30-60 seconds to wake up from sleep on first request.
@@ -311,7 +311,7 @@ For production deployment instructions, see [Deployment Guide](docs/guides/DEPLO
 
 **Quick Overview:**
 - **Frontend**: Static site on Render.com
-- **Backend**: Web service on Render.com  
+- **Backend**: Web service on Render.com
 - **Database**: PostgreSQL on Neon.tech
    - Build: `cd frontend && npm install && npm run build`
    - Publish: `frontend/dist`

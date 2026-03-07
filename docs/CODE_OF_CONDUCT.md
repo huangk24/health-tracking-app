@@ -51,7 +51,7 @@ This Code of Conduct also applies when an individual is officially representing 
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the project maintainers responsible for enforcement at:
 
-**Email**: [maintainer-email@example.com]  
+**Email**: [maintainer-email@example.com]
 **GitHub**: Open a confidential issue or contact maintainers directly
 
 All complaints will be reviewed and investigated promptly and fairly.

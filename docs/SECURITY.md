@@ -366,5 +366,5 @@ If you have security questions or concerns that are not vulnerability reports, p
 
 ---
 
-**Last Updated**: March 6, 2026  
+**Last Updated**: March 6, 2026
 **Version**: 1.0.0

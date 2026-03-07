@@ -153,7 +153,7 @@ npm run dev
    ```bash
    # Backend
    cd backend && uv run pytest tests/ -v
-   
+
    # Frontend
    cd frontend && npm test
    ```
@@ -522,7 +522,7 @@ import '@/styles/user-badge.css';
 
 export const ProfilePage = () => {
   const { user } = useAuth();
-  
+
   return (
     <div>
       <UserBadge username={user.username} email={user.email} />

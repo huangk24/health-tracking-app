@@ -125,7 +125,7 @@ def db_session():
     Base.metadata.create_all(bind=engine)
     SessionLocal = sessionmaker(bind=engine)
     db = SessionLocal()
-    
+
     try:
         yield db
     finally:
@@ -140,7 +140,7 @@ def client(db_session):
             yield db_session
         finally:
             pass
-    
+
     app.dependency_overrides[get_db] = override_get_db
     with TestClient(app) as test_client:
         yield test_client
@@ -189,9 +189,9 @@ def test_create_user(db_session):
         email="john@example.com",
         password="securepassword123"
     )
-    
+
     user = create_user(db_session, user_data)
-    
+
     assert user.id is not None
     assert user.username == "johndoe"
     assert user.email == "john@example.com"
@@ -200,7 +200,7 @@ def test_create_user(db_session):
 def test_get_user_by_username(db_session, test_user):
     """Test retrieving user by username."""
     user = get_user_by_username(db_session, "testuser")
-    
+
     assert user is not None
     assert user.id == test_user.id
     assert user.username == "testuser"
@@ -208,7 +208,7 @@ def test_get_user_by_username(db_session, test_user):
 def test_get_user_by_username_not_found(db_session):
     """Test retrieving non-existent user."""
     user = get_user_by_username(db_session, "nonexistent")
-    
+
     assert user is None
 ```
 
@@ -222,34 +222,34 @@ from app.services.calculations import calculate_bmr, calculate_tdee
 def test_calculate_bmr_male():
     """Test BMR calculation for male."""
     bmr = calculate_bmr(sex="male", age=30, height_cm=175, weight_kg=75)
-    
+
     # Using Mifflin-St Jeor equation
     # BMR = 10 * weight + 6.25 * height - 5 * age + 5
     expected = 10 * 75 + 6.25 * 175 - 5 * 30 + 5
-    
+
     assert bmr == pytest.approx(expected, rel=0.01)
 
 def test_calculate_bmr_female():
     """Test BMR calculation for female."""
     bmr = calculate_bmr(sex="female", age=25, height_cm=165, weight_kg=60)
-    
+
     # BMR = 10 * weight + 6.25 * height - 5 * age - 161
     expected = 10 * 60 + 6.25 * 165 - 5 * 25 - 161
-    
+
     assert bmr == pytest.approx(expected, rel=0.01)
 
 def test_calculate_tdee_sedentary():
     """Test TDEE calculation for sedentary activity level."""
     bmr = 1500
     tdee = calculate_tdee(bmr, "sedentary")
-    
+
     assert tdee == pytest.approx(1500 * 1.2, rel=0.01)
 
 def test_calculate_tdee_very_active():
     """Test TDEE calculation for very active."""
     bmr = 1800
     tdee = calculate_tdee(bmr, "very_active")
-    
+
     assert tdee == pytest.approx(1800 * 1.725, rel=0.01)
 
 @pytest.mark.parametrize("sex,expected_offset", [
@@ -261,9 +261,9 @@ def test_bmr_sex_offset(sex, expected_offset):
     # Fixed values for other parameters
     weight, height, age = 70, 170, 30
     base = 10 * weight + 6.25 * height - 5 * age
-    
+
     bmr = calculate_bmr(sex, age, height, weight)
-    
+
     assert bmr == pytest.approx(base + expected_offset, rel=0.01)
 ```
 
@@ -282,7 +282,7 @@ def test_register_user(client):
         "email": "new@example.com",
         "password": "password123"
     })
-    
+
     assert response.status_code == 201
     data = response.json()
     assert "access_token" in data
@@ -296,7 +296,7 @@ def test_register_duplicate_username(client, test_user):
         "email": "different@example.com",
         "password": "password123"
     })
-    
+
     assert response.status_code == 400
     assert "already exists" in response.json()["detail"].lower()
 
@@ -306,7 +306,7 @@ def test_login_success(client, test_user):
         "username": "testuser",
         "password": "testpassword"
     })
-    
+
     assert response.status_code == 200
     data = response.json()
     assert "access_token" in data
@@ -319,7 +319,7 @@ def test_login_invalid_password(client, test_user):
         "username": "testuser",
         "password": "wrongpassword"
     })
-    
+
     assert response.status_code == 401
     assert "incorrect" in response.json()["detail"].lower()
 
@@ -329,7 +329,7 @@ def test_login_nonexistent_user(client):
         "username": "nonexistent",
         "password": "password123"
     })
-    
+
     assert response.status_code == 401
 ```
 
@@ -357,12 +357,12 @@ def test_get_daily_summary_authenticated(client, auth_headers, test_user, db_ses
     )
     db_session.add(entry)
     db_session.commit()
-    
+
     response = client.get(
         f"/nutrition/daily?date={date.today()}",
         headers=auth_headers
     )
-    
+
     assert response.status_code == 200
     data = response.json()
     assert data["date"] == str(date.today())
@@ -373,7 +373,7 @@ def test_get_daily_summary_authenticated(client, auth_headers, test_user, db_ses
 def test_get_daily_summary_unauthenticated(client):
     """Test that daily summary requires authentication."""
     response = client.get(f"/nutrition/daily?date={date.today()}")
-    
+
     assert response.status_code == 401
 
 def test_create_food_entry(client, auth_headers):
@@ -389,7 +389,7 @@ def test_create_food_entry(client, auth_headers):
         "fat_g": 5.4,
         "date": str(date.today())
     })
-    
+
     assert response.status_code == 201
     data = response.json()
     assert data["food_name"] == "Chicken Breast"
@@ -411,11 +411,11 @@ def test_delete_food_entry(client, auth_headers, test_user, db_session):
     db_session.add(entry)
     db_session.commit()
     entry_id = entry.id
-    
+
     response = client.delete(f"/nutrition/entries/{entry_id}", headers=auth_headers)
-    
+
     assert response.status_code == 204
-    
+
     # Verify deletion
     deleted = db_session.query(FoodEntry).filter(FoodEntry.id == entry_id).first()
     assert deleted is None
@@ -425,11 +425,11 @@ def test_user_cannot_delete_other_users_entry(client, auth_headers, db_session):
     # Create another user's entry
     from app.models.user import User
     from app.models.food_entry import FoodEntry
-    
+
     other_user = User(username="otheruser", email="other@example.com", hashed_password="hash")
     db_session.add(other_user)
     db_session.commit()
-    
+
     entry = FoodEntry(
         user_id=other_user.id,
         meal_type="dinner",
@@ -441,9 +441,9 @@ def test_user_cannot_delete_other_users_entry(client, auth_headers, db_session):
     )
     db_session.add(entry)
     db_session.commit()
-    
+
     response = client.delete(f"/nutrition/entries/{entry.id}", headers=auth_headers)
-    
+
     assert response.status_code == 404  # Entry not found (for security)
 ```
 
@@ -467,7 +467,7 @@ def test_create_food_entry_meal_types(client, auth_headers, meal_type, expected_
         "calories": 100,
         "date": str(date.today())
     })
-    
+
     assert response.status_code == expected_status
 ```
 
@@ -494,11 +494,11 @@ def test_search_usda_foods_success(mock_get):
         "totalHits": 1
     }
     mock_get.return_value = mock_response
-    
+
     from app.services.usda import search_foods
-    
+
     results = search_foods("apple")
-    
+
     assert len(results["foods"]) == 1
     assert results["foods"][0]["description"] == "Apple, raw"
     mock_get.assert_called_once()
@@ -507,9 +507,9 @@ def test_search_usda_foods_success(mock_get):
 def test_search_usda_foods_api_error(mock_get):
     """Test USDA search when API is down."""
     mock_get.side_effect = Exception("API unavailable")
-    
+
     from app.services.usda import search_foods
-    
+
     with pytest.raises(Exception, match="API unavailable"):
         search_foods("apple")
 ```
@@ -572,14 +572,14 @@ import { UserBadge } from './UserBadge';
 describe('UserBadge', () => {
   it('renders username and email', () => {
     render(<UserBadge username="johndoe" email="john@example.com" />);
-    
+
     expect(screen.getByText('johndoe')).toBeInTheDocument();
     expect(screen.getByText('john@example.com')).toBeInTheDocument();
   });
-  
+
   it('applies correct CSS class', () => {
     const { container } = render(<UserBadge username="johndoe" email="john@example.com" />);
-    
+
     expect(container.firstChild).toHaveClass('user-badge');
   });
 });
@@ -596,23 +596,23 @@ import '@testing-library/jest-dom';
 describe('AddFoodForm', () => {
   const mockOnSubmit = vi.fn();
   const mockOnCancel = vi.fn();
-  
+
   beforeEach(() => {
     mockOnSubmit.mockClear();
     mockOnCancel.mockClear();
   });
-  
+
   it('renders all form fields', () => {
     render(<AddFoodForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
-    
+
     expect(screen.getByLabelText(/food name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/calories/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/protein/i)).toBeInTheDocument();
   });
-  
+
   it('calls onSubmit with form data when valid', async () => {
     render(<AddFoodForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
-    
+
     // Fill form
     fireEvent.change(screen.getByLabelText(/food name/i), {
       target: { value: 'Apple' }
@@ -620,10 +620,10 @@ describe('AddFoodForm', () => {
     fireEvent.change(screen.getByLabelText(/calories/i), {
       target: { value: '95' }
     });
-    
+
     // Submit
     fireEvent.click(screen.getByText(/add food/i));
-    
+
     await waitFor(() => {
       expect(mockOnSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -633,27 +633,27 @@ describe('AddFoodForm', () => {
       );
     });
   });
-  
+
   it('shows validation error for negative calories', async () => {
     render(<AddFoodForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
-    
+
     fireEvent.change(screen.getByLabelText(/calories/i), {
       target: { value: '-10' }
     });
     fireEvent.click(screen.getByText(/add food/i));
-    
+
     await waitFor(() => {
       expect(screen.getByText(/must be positive/i)).toBeInTheDocument();
     });
-    
+
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
-  
+
   it('calls onCancel when cancel button clicked', () => {
     render(<AddFoodForm onSubmit={mockOnSubmit} onCancel={mockOnCancel} />);
-    
+
     fireEvent.click(screen.getByText(/cancel/i));
-    
+
     expect(mockOnCancel).toHaveBeenCalled();
   });
 });
@@ -674,33 +674,33 @@ describe('nutritionApi', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-  
+
   it('getDailySummary calls correct endpoint', async () => {
     const mockData = {
       date: '2026-03-06',
       meals: {},
       totals: { calories: 0 }
     };
-    
+
     mockedAxios.get.mockResolvedValue({ data: mockData });
-    
+
     const result = await nutritionApi.getDailySummary('2026-03-06');
-    
+
     expect(mockedAxios.get).toHaveBeenCalledWith('/nutrition/daily?date=2026-03-06');
     expect(result.data).toEqual(mockData);
   });
-  
+
   it('createFoodEntry sends POST request', async () => {
     const mockEntry = {
       meal_type: 'breakfast',
       food_name: 'Oatmeal',
       calories: 300
     };
-    
+
     mockedAxios.post.mockResolvedValue({ data: { id: 1, ...mockEntry } });
-    
+
     await nutritionApi.createFoodEntry(mockEntry);
-    
+
     expect(mockedAxios.post).toHaveBeenCalledWith('/nutrition/entries', mockEntry);
   });
 });
@@ -718,7 +718,7 @@ describe('formatDate', () => {
     const date = new Date('2026-03-06T10:00:00Z');
     expect(formatDate(date)).toBe('2026-03-06');
   });
-  
+
   it('handles string input', () => {
     expect(formatDate('2026-03-06')).toBe('2026-03-06');
   });
@@ -802,7 +802,7 @@ jobs:
       - run: pip install uv
       - run: cd backend && uv sync
       - run: cd backend && uv run pytest tests/ --cov=app --cov-fail-under=80
-  
+
   frontend-tests:
     runs-on: ubuntu-latest
     steps:
@@ -820,22 +820,22 @@ jobs:
 
 ### DO
 
-✅ **Write tests first** (TDD when possible)  
-✅ **One assertion per test** (or closely related assertions)  
-✅ **Use descriptive test names** (`test_cannot_delete_other_users_entry`)  
-✅ **Test edge cases** (empty input, null values, boundary conditions)  
-✅ **Mock external dependencies** (APIs, databases in unit tests)  
-✅ **Clean up after tests** (fixtures handle this)  
-✅ **Test error cases** (not just happy path)  
+✅ **Write tests first** (TDD when possible)
+✅ **One assertion per test** (or closely related assertions)
+✅ **Use descriptive test names** (`test_cannot_delete_other_users_entry`)
+✅ **Test edge cases** (empty input, null values, boundary conditions)
+✅ **Mock external dependencies** (APIs, databases in unit tests)
+✅ **Clean up after tests** (fixtures handle this)
+✅ **Test error cases** (not just happy path)
 
 ### DON'T
 
-❌ **Don't test implementation details** (test behavior, not internals)  
-❌ **Don't share state between tests** (use fixtures)  
-❌ **Don't mock what you don't own** (mock external APIs, not internal functions)  
-❌ **Don't write flaky tests** (tests should be deterministic)  
-❌ **Don't skip failing tests** (fix them or remove them)  
-❌ **Don't test framework code** (test your code, not React/FastAPI)  
+❌ **Don't test implementation details** (test behavior, not internals)
+❌ **Don't share state between tests** (use fixtures)
+❌ **Don't mock what you don't own** (mock external APIs, not internal functions)
+❌ **Don't write flaky tests** (tests should be deterministic)
+❌ **Don't skip failing tests** (fix them or remove them)
+❌ **Don't test framework code** (test your code, not React/FastAPI)
 
 ---
 
@@ -856,7 +856,7 @@ def test_protected_endpoint(client, auth_headers):
 # Use db_session fixture and verify database state
 def test_creates_record(client, auth_headers, db_session):
     client.post("/entries", headers=auth_headers, json={...})
-    
+
     from app.models.food_entry import FoodEntry
     count = db_session.query(FoodEntry).count()
     assert count == 1
@@ -867,7 +867,7 @@ def test_creates_record(client, auth_headers, db_session):
 ```python
 def test_invalid_input(client):
     response = client.post("/entries", json={"calories": -10})
-    
+
     assert response.status_code == 422
     assert "must be positive" in response.json()["detail"][0]["msg"]
 ```

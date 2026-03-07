@@ -2,7 +2,7 @@
 
 ## Base URL
 
-**Development:** `http://localhost:8000`  
+**Development:** `http://localhost:8000`
 **Production:** `https://health-tracking-backend.onrender.com`
 
 ## Authentication
@@ -772,14 +772,14 @@ All endpoints may return the following error formats:
 
 ## Rate Limiting
 
-**Current:** No rate limiting implemented  
+**Current:** No rate limiting implemented
 **Future:** 100 requests per minute per user
 
 ---
 
 ## API Versioning
 
-**Current:** No versioning (v1 implicit)  
+**Current:** No versioning (v1 implicit)
 **Future:** Path-based versioning (`/api/v1/`, `/api/v2/`)
 
 ---
@@ -827,13 +827,13 @@ const register = async (username: string, email: string, password: string) => {
 const login = async (username: string, password: string) => {
   const response = await api.post('/auth/login', { username, password });
   const { access_token } = response.data;
-  
+
   // Store token
   localStorage.setItem('token', access_token);
-  
+
   // Set default auth header
   api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-  
+
   return response.data;
 };
 

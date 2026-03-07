@@ -312,7 +312,7 @@ This roadmap is reviewed and updated:
 - **Quarterly** - Major version planning
 - **Annually** - Long-term vision review
 
-**Last Updated**: March 6, 2026  
+**Last Updated**: March 6, 2026
 **Next Review**: April 1, 2026
 
 ---
